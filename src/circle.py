@@ -1,4 +1,3 @@
-# /usr/bin/env python
 # -*- coding: utf-8 -*-
 """CLI wrapper for CircleCI's REST API."""
 import requests
@@ -39,7 +38,7 @@ class CircleAPI(object):
 
         return urlunparse(new_parse)
 
-    def get(self, endpoint, params={}):
+    def get(self, endpoint, params={}, headers={}):
         """Request the URL at `endpoint`.
 
         Args:
@@ -50,10 +49,19 @@ class CircleAPI(object):
             (dict) the JSON-converted response from the endpoint
         """
         url = self.build_url(endpoint, params)
-        headers = {'Content-Type': 'application/json'}
+        new_headers = {'Content-Type': 'application/json'}
+        new_headers.update(headers)
 
-        r = requests.get(url, headers=headers)
+        r = requests.get(url, headers=new_headers)
         if r.status_code >= 400:
-            raise Exception(u"There was an error sending this request.")
+            raise Exception(u"Error sending GET request to {}".format(url))
 
         return r.json()
+
+    def me(self):
+        """Endpoint at /me.
+
+        Returns:
+            (dict) the JSON-converted response from the endpoint
+        """
+        return self.get('me')
