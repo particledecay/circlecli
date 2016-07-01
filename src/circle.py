@@ -50,7 +50,7 @@ class CircleAPI(object):
             (dict) the JSON-converted response from the endpoint
         """
         url = self._build_url(endpoint, params)
-        new_headers = {'Content-Type': 'application/json'}
+        new_headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
         new_headers.update(headers)
 
         r = requests.get(url, headers=new_headers)
@@ -71,7 +71,7 @@ class CircleAPI(object):
             (dict) the JSON-converted response from the endpoint
         """
         url = self._build_url(endpoint)
-        new_headers = {'Content-Type': 'application/json'}
+        new_headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
         new_headers.update(headers)
 
         r = requests.post(url, headers=new_headers, data=data)
@@ -91,7 +91,7 @@ class CircleAPI(object):
             (dict) the JSON-converted response from the endpoint
         """
         url = self._build_url(endpoint)
-        new_headers = {'Content-Type': 'application/json'}
+        new_headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
         new_headers.update(headers)
 
         r = requests.delete(url, headers=headers)
