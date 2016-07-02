@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """CLI wrapper for CircleCI's REST API."""
+import json
 import requests
+from collections import OrderedDict
+from dateutil import parser as dp, tz
 from urllib import urlencode
 from urlparse import ParseResult, urlparse, urlunparse
 
@@ -100,41 +103,111 @@ class CircleAPI(object):
 
         return r.json()
 
-    def me(self):
+    def me(self, verbose=False):
         """Provide information about the signed in user.
+
+        Args:
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (dict) the JSON-converted response from the endpoint
         """
-        return self._get('me')
+        r_json = self._get('me')
+        if verbose:
+            return json.dumps(r_json, indent=2)
 
-    def projects(self):
+        resp = OrderedDict()
+        resp['Name'] = r_json['name']
+        resp['Emails'] = ', '.join(r_json['all_emails'])
+        resp['Sign-In Count'] = r_json['sign_in_count']
+        resp['Heroku API Key'] = r_json['heroku_api_key']
+        resp['Containers'] = r_json['containers']
+        resp['Parallelism'] = r_json['parallelism']
+        resp['Username'] = r_json['login']
+        resp['Admin'] = r_json['admin']
+        resp['Projects'] = ', '.join(r_json['projects'].keys())
+
+        return resp
+
+    def projects(self, verbose=False):
         """List of all the projects you're following on CircleCI.
+
+        Args:
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (list) a list of all the projects and project info
         """
-        return self._get('projects')
+        r_json = self._get('projects')
+        if verbose:
+            return json.dumps(r_json, indent=2)
 
-    def project_builds(self, username, project):
+        resp = ['{}/{}'.format(j['username'], j['reponame']) for j in r_json]
+        return resp
+
+    def project_builds(self, username, project, verbose=False):
         """Build summary for each of the last 30 builds for a single git repo.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (list) a list of builds for the project
         """
-        return self._get('project/{username}/{project}'.format(locals()))
+        r_json = self._get('project/{username}/{project}'.format(**locals()))
+        if verbose:
+            return json.dumps(r_json, indent=2)
 
-    def recent_builds(self):
+        resp = []
+        for build in r_json:
+            o = OrderedDict()
+            o['Build# '] = build['build_num']
+            o['Author '] = '{} <{}>'.format(build['author_name'], build['author_email']) if build['author_email'] else build['author_email']
+            if build['vcs_tag']:
+                o['Tag    '] = build['vcs_tag']
+            else:
+                o['Branch '] = build['branch'] or 'Unknown'
+            dt = dp.parse(build['queued_at']).astimezone(tz.tzlocal())
+            o['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
+            o['Trigger'] = build['why']
+            o['URL    '] = build['build_url']
+            o['Result '] = build['outcome']
+            resp.insert(0, o)
+
+        return resp
+
+    def recent_builds(self, verbose=False):
         """Build summary for each of the last 30 recent builds.
+
+        Args:
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (list) a list of builds
         """
-        return self._get('recent-builds')
+        r_json = self._get('recent-builds')
+        if verbose:
+            return json.dumps(r_json, indent=2)
+
+        resp = []
+        for build in r_json:
+            o = OrderedDict()
+            o['Build# '] = build['build_num']
+            o['Author '] = '{} <{}>'.format(build['author_name'], build['author_email']) if build['author_email'] else build['author_email']
+            if build['vcs_tag']:
+                o['Tag    '] = build['vcs_tag']
+            else:
+                o['Branch '] = build['branch'] or 'Unknown'
+            dt = dp.parse(build['queued_at']).astimezone(tz.tzlocal())
+            o['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
+            o['Trigger'] = build['why']
+            o['URL    '] = build['build_url']
+            o['Result '] = build['outcome']
+            resp.insert(0, o)
+
+        return resp
 
     def build_details(self, username, project, build_num):
         """Full details for a single build.
@@ -151,7 +224,7 @@ class CircleAPI(object):
         Returns:
             (dict) the full details for the build
         """
-        return self._get('project/{username}/{project}/{build_num}'.format(locals()))
+        return self._get('project/{username}/{project}/{build_num}'.format(**locals()))
 
     def artifacts(self, username, project, build_num):
         """List the artifacts produced by a given build.
@@ -164,7 +237,7 @@ class CircleAPI(object):
         Returns:
             (list) the artifacts produced by the build
         """
-        return self._get('project/{username}/{project}/{build_num}/artifacts'.format(locals()))
+        return self._get('project/{username}/{project}/{build_num}/artifacts'.format(**locals()))
 
     def retry_build(self, username, project, build_num):
         """Retry a given build.
@@ -177,7 +250,7 @@ class CircleAPI(object):
         Returns:
             (dict) a summary of the new build
         """
-        return self._post('project/{username}/{project}/{build_num}/retry'.format(locals()))
+        return self._post('project/{username}/{project}/{build_num}/retry'.format(**locals()))
 
     def cancel_build(self, username, project, build_num):
         """Cancel a given build.
@@ -190,7 +263,7 @@ class CircleAPI(object):
         Returns:
             (dict) a summary of the canceled build
         """
-        return self._post('project/{username}/{project}/{build_num}/cancel'.format(locals()))
+        return self._post('project/{username}/{project}/{build_num}/cancel'.format(**locals()))
 
     def ssh_users(self, username, project, build_num):
         """Add a user to the build's SSH permissions.
@@ -240,7 +313,7 @@ class CircleAPI(object):
         Returns:
             (list) the checkout keys
         """
-        return self._get('project/{username}/{project}/checkout-key'.format(locals()))
+        return self._get('project/{username}/{project}/checkout-key'.format(**locals()))
 
     def create_checkout_key(self, username, project):
         """List checkout keys.
@@ -265,7 +338,7 @@ class CircleAPI(object):
         Returns:
             (dict) a single checkout key
         """
-        return self._get('project/{username}/{project}/checkout-key/{fingerprint}'.format(locals()))
+        return self._get('project/{username}/{project}/checkout-key/{fingerprint}'.format(**locals()))
 
     def delete_checkout_key(self, username, project, fingerprint):
         """Delete a checkout key.
@@ -278,7 +351,7 @@ class CircleAPI(object):
         Returns:
             (dict) a single checkout key
         """
-        return self._delete('project/{username}/{project}/checkout-key/{fingerprint}'.format(locals()))
+        return self._delete('project/{username}/{project}/checkout-key/{fingerprint}'.format(**locals()))
 
     def clear_cache(self, username, project):
         """Clear the cache for a project.
@@ -290,7 +363,7 @@ class CircleAPI(object):
         Returns:
             (dict) confirmation of the cleared cache
         """
-        return self._delete('project/{username}/{project}/build-cache'.format(locals()))
+        return self._delete('project/{username}/{project}/build-cache'.format(**locals()))
 
     def add_circle_key(self):
         """Add a CircleCI key to your GitHub user account.
