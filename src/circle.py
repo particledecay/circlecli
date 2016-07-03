@@ -145,8 +145,8 @@ class CircleAPI(object):
         resp = ['{}/{}'.format(j['username'], j['reponame']) for j in r_json]
         return resp
 
-    def project_builds(self, username, project, verbose=False):
-        """Build summary for each of the last 30 builds for a single git repo.
+    def builds(self, username=None, project=None, verbose=False):
+        """Last 30 build summaries for the account (or project if specified).
 
         Args:
             username (str): the owner of the project
@@ -154,40 +154,13 @@ class CircleAPI(object):
             verbose (bool): whether to return filtered info or the full response
 
         Returns:
-            (list) a list of builds for the project
+            (list) the last 30 build summaries
         """
-        r_json = self._get('project/{username}/{project}'.format(**locals()))
-        if verbose:
-            return json.dumps(r_json, indent=2)
+        if username and project:
+            r_json = self._get('project/{username}/{project}'.format(**locals()))
+        else:
+            r_json = self._get('recent-builds')
 
-        resp = []
-        for build in r_json:
-            o = OrderedDict()
-            o['Build# '] = build['build_num']
-            o['Author '] = '{} <{}>'.format(build['author_name'], build['author_email']) if build['author_email'] else build['author_email']
-            if build['vcs_tag']:
-                o['Tag    '] = build['vcs_tag']
-            else:
-                o['Branch '] = build['branch'] or 'Unknown'
-            dt = dp.parse(build['queued_at']).astimezone(tz.tzlocal())
-            o['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
-            o['Trigger'] = build['why']
-            o['URL    '] = build['build_url']
-            o['Result '] = build['outcome']
-            resp.insert(0, o)
-
-        return resp
-
-    def recent_builds(self, verbose=False):
-        """Build summary for each of the last 30 recent builds.
-
-        Args:
-            verbose (bool): whether to return filtered info or the full response
-
-        Returns:
-            (list) a list of builds
-        """
-        r_json = self._get('recent-builds')
         if verbose:
             return json.dumps(r_json, indent=2)
 

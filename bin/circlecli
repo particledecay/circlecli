@@ -113,19 +113,10 @@ if __name__ == "__main__":
                 print(k)
         else:
             print(res)
-    elif args.action == 'project':
-        if not args.username or not args.project:
-            parser.error("username (-u) and project (-p) are required")
-        res = circle.project_builds(args.username, args.project, args.verbose)
-        if not args.verbose:
-            for build in res:
-                for k, v in build.iteritems():
-                    print("{}: {}".format(k, v))
-                print("")
-        else:
-            print(res)
-    elif args.action == 'recent-builds':
-        res = circle.recent_builds(args.verbose)
+    elif args.action == 'builds':
+        if args.project and not args.username:
+            parser.error("username (-u) is required")
+        res = circle.builds(args.username, args.project, args.verbose)
         if not args.verbose:
             for build in res:
                 for k, v in build.iteritems():
