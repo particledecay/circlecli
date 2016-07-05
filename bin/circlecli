@@ -116,7 +116,8 @@ if __name__ == "__main__":
     elif args.action == 'builds':
         if args.project and not args.username:
             parser.error("username (-u) is required")
-        res = circle.builds(args.username, args.project, args.verbose)
+        res = circle.builds(username=args.username, project=args.project,
+                            build_num=args.build_num, verbose=args.verbose)
         if not args.verbose:
             for build in res:
                 for k, v in build.iteritems():
@@ -124,5 +125,25 @@ if __name__ == "__main__":
                 print("")
         else:
             print(res)
+    elif args.action == 'artifacts':
+        if args.project and not args.username:
+            parser.error("username (-u) is required")
+        if not args.build_num:
+            parser.error("build-num (-b) is required")
+        res = circle.artifacts(username=args.username, project=args.project,
+                               build_num=args.build_num, verbose=args.verbose)
+        if not args.verbose:
+            for k in res:
+                print(k)
+        else:
+            print(res)
+    elif args.action == 'retry':
+        if args.project and not args.username:
+            parser.error("username (-u) is required")
+        if not args.build_num:
+            parser.error("build-num (-b) is required")
+        res = circle.retry_build(username=args.username, project=args.project,
+                                 build_num=args.build_num, verbose=args.verbose)
+        print(res)
     else:
         print("Unknown action: {}".format(args.action))

@@ -145,19 +145,23 @@ class CircleAPI(object):
         resp = ['{}/{}'.format(j['username'], j['reponame']) for j in r_json]
         return resp
 
-    def builds(self, username=None, project=None, verbose=False):
+    def builds(self, username=None, project=None, build_num=None, verbose=False):
         """Last 30 build summaries for the account (or project if specified).
 
         Args:
             username (str): the owner of the project
             project (str): the project name
+            build_num (int): the build number
             verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (list) the last 30 build summaries
         """
         if username and project:
-            r_json = self._get('project/{username}/{project}'.format(**locals()))
+            if build_num:
+                r_json = self._get('project/{username}/{project}/{build_num}'.format(**locals()))
+            else:
+                r_json = self._get('project/{username}/{project}'.format(**locals()))
         else:
             r_json = self._get('recent-builds')
 
@@ -165,6 +169,8 @@ class CircleAPI(object):
             return json.dumps(r_json, indent=2)
 
         resp = []
+        if not isinstance(r_json, list):
+            r_json = [r_json]
         for build in r_json:
             o = OrderedDict()
             o['Build# '] = build['build_num']
@@ -182,61 +188,58 @@ class CircleAPI(object):
 
         return resp
 
-    def build_details(self, username, project, build_num):
-        """Full details for a single build.
-
-        Args:
-            username (str): the owner of the project
-            project (str): the project name
-            build_num (int): the build number
-
-        The response includes all of the fields from the build summary. This is
-        also the payload for the [notification webhooks](https://circleci.com/docs/configuration/#notify),
-        in which case this object is the value to a key named 'payload'.
-
-        Returns:
-            (dict) the full details for the build
-        """
-        return self._get('project/{username}/{project}/{build_num}'.format(**locals()))
-
-    def artifacts(self, username, project, build_num):
+    def artifacts(self, username, project, build_num, verbose=False):
         """List the artifacts produced by a given build.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
             build_num (int): the build number
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (list) the artifacts produced by the build
         """
-        return self._get('project/{username}/{project}/{build_num}/artifacts'.format(**locals()))
+        r_json = self._get('project/{username}/{project}/{build_num}/artifacts'.format(**locals()))
+        if verbose:
+            return json.dumps(r_json, indent=2)
+        return [ar['url'] for ar in r_json]
 
-    def retry_build(self, username, project, build_num):
+    def retry_build(self, username, project, build_num, verbose=False):
         """Retry a given build.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
             build_num (int): the build number
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (dict) a summary of the new build
         """
-        return self._post('project/{username}/{project}/{build_num}/retry'.format(**locals()))
+        r_json = self._post('project/{username}/{project}/{build_num}/retry'.format(**locals()))
+        if verbose:
+            return json.dumps(r_json, indent=2)
 
-    def cancel_build(self, username, project, build_num):
+        return r_json['build_url']
+
+    def cancel_build(self, username, project, build_num, verbose=False):
         """Cancel a given build.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
             build_num (int): the build number
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (dict) a summary of the canceled build
         """
-        return self._post('project/{username}/{project}/{build_num}/cancel'.format(**locals()))
+        r_json = self._post('project/{username}/{project}/{build_num}/cancel'.format(**locals()))
+        if verbose:
+            return json.dumps(r_json, indent=2)
+
+        return r_json['build_url']
 
     def ssh_users(self, username, project, build_num):
         """Add a user to the build's SSH permissions.
