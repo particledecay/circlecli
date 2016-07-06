@@ -145,5 +145,29 @@ if __name__ == "__main__":
         res = circle.retry_build(username=args.username, project=args.project,
                                  build_num=args.build_num, verbose=args.verbose)
         print(res)
+    elif args.action == 'add-key':
+        if args.project and not args.username:
+            parser.error("username (-u) is required")
+        if not args.build_num:
+            parser.error("build-num (-b) is required")
+        res = circle.ssh_users(username=args.username, project=args.project,
+                               build_num=args.build_num, verbose=args.verbose)
+        if not args.verbose:
+            for k, v in res.iteritems():
+                print("{}: {}".format(k, v))
+        else:
+            print(res)
+    elif args.action == 'clear-cache':
+        if args.project and not args.username:
+            parser.error("username (-u) is required")
+        if not args.build_num:
+            parser.error("build-num (-b) is required")
+        res = circle.clear_cache(username=args.username, project=args.project,
+                                 build_num=args.build_num, verbose=args.verbose)
+        if not args.verbose:
+            for k, v in res.iteritems():
+                print("{}: {}".format(k, v))
+        else:
+            print(res)
     else:
         print("Unknown action: {}".format(args.action))

@@ -221,7 +221,20 @@ class CircleAPI(object):
         if verbose:
             return json.dumps(r_json, indent=2)
 
-        return r_json['build_url']
+        resp = OrderedDict()
+        resp['Build# '] = r_json['build_num']
+        resp['Author '] = '{} <{}>'.format(r_json['author_name'], r_json['author_email']) if r_json['author_email'] else r_json['author_email']
+        if r_json['vcs_tag']:
+            resp['Tag    '] = r_json['vcs_tag']
+        else:
+            resp['Branch '] = r_json['branch'] or 'Unknown'
+        dt = dp.parse(r_json['queued_at']).astimezone(tz.tzlocal())
+        resp['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
+        resp['Trigger'] = r_json['why']
+        resp['URL    '] = r_json['build_url']
+        resp['Result '] = r_json['outcome']
+
+        return resp
 
     def cancel_build(self, username, project, build_num, verbose=False):
         """Cancel a given build.
@@ -235,37 +248,87 @@ class CircleAPI(object):
         Returns:
             (dict) a summary of the canceled build
         """
-        r_json = self._post('project/{username}/{project}/{build_num}/cancel'.format(**locals()))
+        r_json = self._post("project/{username}/{project}/{build_num}/cancel".format(**locals()))
         if verbose:
             return json.dumps(r_json, indent=2)
 
-        return r_json['build_url']
+        resp = OrderedDict()
+        resp['Build# '] = r_json['build_num']
+        resp['Author '] = '{} <{}>'.format(r_json['author_name'], r_json['author_email']) if r_json['author_email'] else r_json['author_email']
+        if r_json['vcs_tag']:
+            resp['Tag    '] = r_json['vcs_tag']
+        else:
+            resp['Branch '] = r_json['branch'] or 'Unknown'
+        dt = dp.parse(r_json['queued_at']).astimezone(tz.tzlocal())
+        resp['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
+        resp['Trigger'] = r_json['why']
+        resp['URL    '] = r_json['build_url']
+        resp['Result '] = r_json['outcome']
 
-    def ssh_users(self, username, project, build_num):
+        return resp
+
+    def ssh_users(self, username, project, build_num, verbose=False):
         """Add a user to the build's SSH permissions.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
             build_num (int): the build number
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (dict) confirmation of the added user
         """
-        raise NotImplementedError(u"This method has not yet been implemented.")
+        r_json = self._post("project/{username}/{project}/{build_num}/ssh-users".format(**locals()))
+        if verbose:
+            return json.dumps(r_json, indent=2)
 
-    def new_build(self, username, project, branch):
+        resp = OrderedDict()
+        resp['Build# '] = r_json['build_num']
+        resp['Author '] = '{} <{}>'.format(r_json['author_name'], r_json['author_email']) if r_json['author_email'] else r_json['author_email']
+        if r_json['vcs_tag']:
+            resp['Tag    '] = r_json['vcs_tag']
+        else:
+            resp['Branch '] = r_json['branch'] or 'Unknown'
+        dt = dp.parse(r_json['queued_at']).astimezone(tz.tzlocal())
+        resp['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
+        resp['Trigger'] = r_json['why']
+        resp['URL    '] = r_json['build_url']
+        resp['Result '] = r_json['outcome']
+
+        return resp
+
+    def new_build(self, username, project, branch="master", data=None, verbose=False):
         """Trigger a new build.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
             branch (str): the branch to use for the build
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (dict) a summary of the new build
         """
-        raise NotImplementedError(u"This method has not yet been implemented.")
+        r_json = self._post("project/{username}/{project}/tree/{branch}".format(**locals()),
+                            data=data)
+        if verbose:
+            return json.dumps(r_json, indent=2)
+
+        resp = OrderedDict()
+        resp['Build# '] = r_json['build_num']
+        resp['Author '] = '{} <{}>'.format(r_json['author_name'], r_json['author_email']) if r_json['author_email'] else r_json['author_email']
+        if r_json['vcs_tag']:
+            resp['Tag    '] = r_json['vcs_tag']
+        else:
+            resp['Branch '] = r_json['branch'] or 'Unknown'
+        dt = dp.parse(r_json['queued_at']).astimezone(tz.tzlocal())
+        resp['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
+        resp['Trigger'] = r_json['why']
+        resp['URL    '] = r_json['build_url']
+        resp['Result '] = r_json['outcome']
+
+        return resp
 
     def create_ssh(self, username, project):
         """Create an SSH key used to access key-based external systems.
@@ -329,17 +392,25 @@ class CircleAPI(object):
         """
         return self._delete('project/{username}/{project}/checkout-key/{fingerprint}'.format(**locals()))
 
-    def clear_cache(self, username, project):
+    def clear_cache(self, username, project, verbose=False):
         """Clear the cache for a project.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
+            verbose (bool): whether to return filtered info or the full response
 
         Returns:
             (dict) confirmation of the cleared cache
         """
-        return self._delete('project/{username}/{project}/build-cache'.format(**locals()))
+        r_json = self._delete('project/{username}/{project}/build-cache'.format(**locals()))
+        if verbose:
+            return json.dumps(r_json, indent=2)
+
+        resp = OrderedDict()
+        resp['status'] = r_json['status']
+
+        return resp
 
     def add_circle_key(self):
         """Add a CircleCI key to your GitHub user account.
