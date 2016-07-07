@@ -427,3 +427,37 @@ class CircleAPI(object):
             (dict) confirmation of the key addition
         """
         raise NotImplementedError(u"This method has not yet been implemented.")
+
+    def envvar(self, username, project, verbose=False, **envvars):
+        """List or add environment variables to a project.
+
+        Args:
+            username (str): the owner of the project
+            project (str): the project name
+            verbose (bool): whether to return filtered info or the full response
+            **envvars (dict): variables to set
+
+        Return:
+            (dict/list) confirmation of the variable addition or list of variables
+        """
+        data = [{"name": k, "value": v} for k, v in envvars.iteritems()]
+
+        resp = []
+        if len(data) > 0:
+            for d in data:
+                r_json = self._post("project/{username}/{project}/envvar".format(**locals()),
+                                    data=json.dumps(d))
+                if r_json:
+                    resp.append(r_json)
+        else:
+            r_json = self._get("project/{username}/{project}/envvar".format(**locals()))
+            if r_json:
+                resp.extend(r_json)
+
+        if verbose:
+            return json.dumps(resp, indent=2)
+
+        formatted_resp = []
+        for var in resp:
+            formatted_resp.append("{}: {}".format(var['name'], var['value']))
+        return formatted_resp

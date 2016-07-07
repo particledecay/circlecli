@@ -82,14 +82,16 @@ if __name__ == "__main__":
                         help="The username of the project/repo owner")
     parser.add_argument('--build-num', '-b', dest='build_num', action='store',
                         type=int, help="The target build number")
-    parser.add_argument('--settings', '-s', dest='settings', action='store_true',
+    parser.add_argument('--config', '-c', dest='config', action='store_true',
                         default=False, help="Only print saved configuration values")
     parser.add_argument('--verbose', '-v', dest='verbose', action='store_true',
                         default=False, help="Include full output from CircleCI (not the default filtered version)")
+    parser.add_argument('--set', '-s', dest='envvars', action='append',
+                        default=[], help="Set a variable (used with 'env' command)")
 
     args = parser.parse_args()
 
-    if args.settings:
+    if args.config:
         for k, v in config.iteritems():
             print("{} = {}".format(k, v))
         sys.exit(0)
@@ -167,6 +169,21 @@ if __name__ == "__main__":
         if not args.verbose:
             for k, v in res.iteritems():
                 print("{}: {}".format(k, v))
+        else:
+            print(res)
+    elif args.action == 'env':
+        if args.project and not args.username:
+            parser.error("username (-u) is required")
+        envvars = {}
+        for envvar in args.envvars:
+            if "=" in envvar:
+                name, value = envvar.split("=")
+                envvars[name] = value
+        res = circle.envvar(username=args.username, project=args.project,
+                            verbose=args.verbose, **envvars)
+        if not args.verbose:
+            for var in res:
+                print(var)
         else:
             print(res)
     else:
