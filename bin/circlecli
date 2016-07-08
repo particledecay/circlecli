@@ -61,6 +61,7 @@ def init_config(config_path):
 if __name__ == "__main__":
     import argparse
     import sys
+    from collections import OrderedDict
     from os import path as op
 
     from src.circle import CircleAPI
@@ -73,8 +74,9 @@ if __name__ == "__main__":
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('action', action='store', nargs='?',
                         help="One of the following actions:\n"
-                             "\tme\n"
+                             "\tme\t\n"
                              "\tprojects\n")
+    parser.add_argument('help', nargs='?', help="Get help on a particular action")
     parser.add_argument('--project', '-p', dest='project', action='store',
                         help="The target project name")
     parser.add_argument('--username', '-u', dest='username', action='store',
@@ -85,15 +87,49 @@ if __name__ == "__main__":
     parser.add_argument('--config', '-c', dest='config', action='store_true',
                         default=False, help="Only print saved configuration values")
     parser.add_argument('--verbose', '-v', dest='verbose', action='store_true',
-                        default=False, help="Include full output from CircleCI (not the default filtered version)")
+                        default=False, help="Return original full output from CircleCI")
     parser.add_argument('--set', '-s', dest='envvars', action='append',
-                        default=[], help="Set a variable (used with 'env' command)")
+                        default=[], help="Set a variable (used with 'env' or 'trigger' command)")
 
     args = parser.parse_args()
+
+    def is_action_help(action):
+        """Check if the next arg is a help arg."""
+        idx = sys.argv.index(action)
+        next_idx = idx + 1
+        if len(sys.argv) < (next_idx + 1):
+            return False
+        return sys.argv[next_idx] == 'help'
+
+    def print_action_help(summary, kwargs={}, examples={}):
+        """Print a help message for a particular action."""
+        msgs = [summary, '']
+        [msgs.append({k: v}) for k, v in kwargs.iteritems()]
+        for msg in msgs:
+            if not isinstance(msg, dict):
+                print(msg)
+            else:
+                for k, v in msg.iteritems():
+                    print("{}: {}".format(k, v))
+        if not kwargs:
+            print("(no args)")
+
+        if examples:
+            print("")
+            print("EXAMPLES")
+            for title, ex in examples.iteritems():
+                print("{}:".format(title))
+                print("\t{}".format(ex))
+                print("")
 
     if args.config or args.action == 'config':
         for k, v in config.iteritems():
             print("{} = {}".format(k, v))
+        sys.exit(0)
+
+    # help action
+    if args.help and not args.action:
+        parser.print_help()
         sys.exit(0)
 
     # required args
@@ -101,92 +137,171 @@ if __name__ == "__main__":
         parser.error("you must specify an action")
 
     circle = CircleAPI(config['token'])
-    if args.action == 'help':
-        parser.print_help()
-    elif args.action == 'me':
-        res = circle.me(args.verbose)
-        if not args.verbose:
-            for k, v in res.iteritems():
-                print("{}: {}".format(k, v))
+    if args.action == 'me':
+        if is_action_help('me'):
+            help_args = OrderedDict()
+            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+
+            ex_args = OrderedDict()
+            ex_args['Print information about your account'] = "circlecli me"
+            print_action_help(circle.me.__doc__.split('\n')[0], help_args, ex_args)
         else:
-            print(res)
-    elif args.action == 'projects':
-        res = circle.projects(args.verbose)
-        if not args.verbose:
-            for k in res:
-                print(k)
-        else:
-            print(res)
-    elif args.action == 'builds':
-        if args.project and not args.username:
-            parser.error("username (-u) is required")
-        res = circle.builds(username=args.username, project=args.project,
-                            build_num=args.build_num, verbose=args.verbose)
-        if not args.verbose:
-            for build in res:
-                for k, v in build.iteritems():
+            res = circle.me(args.verbose)
+            if not args.verbose:
+                for k, v in res.iteritems():
                     print("{}: {}".format(k, v))
-                print("")
+            else:
+                print(res)
+    elif args.action == 'projects':
+        if is_action_help('projects'):
+            help_args = OrderedDict()
+            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+
+            ex_args = OrderedDict()
+            ex_args['List projects followed by your account'] = "circlecli projects"
+            print_action_help(circle.projects.__doc__.split('\n')[0], help_args, ex_args)
         else:
-            print(res)
+            res = circle.projects(args.verbose)
+            if not args.verbose:
+                for k in res:
+                    print(k)
+            else:
+                print(res)
+    elif args.action == 'builds':
+        if is_action_help('builds'):
+            help_args = OrderedDict()
+            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['--project|-p <str>'] = "\t(optional) A project to get build info"
+            help_args['--build_num|-b <int>'] = "\t(optional) A build number to get specific build details"
+            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+
+            ex_args = OrderedDict()
+            ex_args['List builds for the account'] = "circlecli builds -u foo_user"
+            ex_args['List builds for a project'] = "circlecli builds -u foo_user -p foo_project"
+            ex_args["List a specific build's details"] = "circlecli builds -u foo_user -p foo_project -b 14"
+            print_action_help(circle.builds.__doc__.split('\n')[0], help_args, ex_args)
+        else:
+            if args.project and not args.username:
+                parser.error("username (-u) is required")
+            res = circle.builds(username=args.username, project=args.project,
+                                build_num=args.build_num, verbose=args.verbose)
+            if not args.verbose:
+                for build in res:
+                    for k, v in build.iteritems():
+                        print("{}: {}".format(k, v))
+                    print("")
+            else:
+                print(res)
     elif args.action == 'artifacts':
-        if args.project and not args.username:
-            parser.error("username (-u) is required")
-        if not args.build_num:
-            parser.error("build-num (-b) is required")
-        res = circle.artifacts(username=args.username, project=args.project,
-                               build_num=args.build_num, verbose=args.verbose)
-        if not args.verbose:
-            for k in res:
-                print(k)
+        if is_action_help('artifacts'):
+            help_args = OrderedDict()
+            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['--project|-p <str>'] = "\t(optional) A project to get build info"
+            help_args['--build_num|-b <int>'] = "\t(optional) A build number to get artifacts"
+            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+
+            ex_args = OrderedDict()
+            ex_args['List artifacts for a build'] = "circlecli artifacts -u foo_user -p foo_project -b 14"
+            print_action_help(circle.artifacts.__doc__.split('\n')[0], help_args, ex_args)
         else:
-            print(res)
+            if args.project and not args.username:
+                parser.error("username (-u) is required")
+            if not args.build_num:
+                parser.error("build-num (-b) is required")
+            res = circle.artifacts(username=args.username, project=args.project,
+                                   build_num=args.build_num, verbose=args.verbose)
+            if not args.verbose:
+                for k in res:
+                    print(k)
+            else:
+                print(res)
     elif args.action == 'retry':
-        if args.project and not args.username:
-            parser.error("username (-u) is required")
-        if not args.build_num:
-            parser.error("build-num (-b) is required")
-        res = circle.retry_build(username=args.username, project=args.project,
-                                 build_num=args.build_num, verbose=args.verbose)
-        print(res)
+        if is_action_help('retry'):
+            help_args = OrderedDict()
+            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['--project|-p <str>'] = "\t(optional) A project to get build info"
+            help_args['--build_num|-b <int>'] = "\t(optional) A build number to retry"
+            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+
+            ex_args = OrderedDict()
+            ex_args['Retry a build'] = "circlecli retry -u foo_user -p foo_project -b 14"
+            print_action_help(circle.retry_build.__doc__.split('\n')[0], help_args, ex_args)
+        else:
+            if args.project and not args.username:
+                parser.error("username (-u) is required")
+            if not args.build_num:
+                parser.error("build-num (-b) is required")
+            res = circle.retry_build(username=args.username, project=args.project,
+                                     build_num=args.build_num, verbose=args.verbose)
+            print(res)
     elif args.action == 'add-key':
-        if args.project and not args.username:
-            parser.error("username (-u) is required")
-        if not args.build_num:
-            parser.error("build-num (-b) is required")
-        res = circle.ssh_users(username=args.username, project=args.project,
-                               build_num=args.build_num, verbose=args.verbose)
-        if not args.verbose:
-            for k, v in res.iteritems():
-                print("{}: {}".format(k, v))
+        if is_action_help('add-key'):
+            help_args = OrderedDict()
+            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['--project|-p <str>'] = "\t(optional) A project to get build info"
+            help_args['--build_num|-b <int>'] = "\t(optional) A build number to add the key"
+            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            print_action_help(circle.ssh_users.__doc__.split('\n')[0], help_args)
         else:
-            print(res)
+            if args.project and not args.username:
+                parser.error("username (-u) is required")
+            if not args.build_num:
+                parser.error("build-num (-b) is required")
+            res = circle.ssh_users(username=args.username, project=args.project,
+                                   build_num=args.build_num, verbose=args.verbose)
+            if not args.verbose:
+                for k, v in res.iteritems():
+                    print("{}: {}".format(k, v))
+            else:
+                print(res)
     elif args.action == 'clear-cache':
-        if args.project and not args.username:
-            parser.error("username (-u) is required")
-        if not args.build_num:
-            parser.error("build-num (-b) is required")
-        res = circle.clear_cache(username=args.username, project=args.project,
-                                 build_num=args.build_num, verbose=args.verbose)
-        if not args.verbose:
-            for k, v in res.iteritems():
-                print("{}: {}".format(k, v))
+        if is_action_help('clear-cache'):
+            help_args = OrderedDict()
+            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['--project|-p <str>'] = "\t(optional) The project's cache to clear"
+            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+
+            ex_args = OrderedDict()
+            ex_args["Clear a project's cache"] = "circlecli clear-cache -u foo_user -p foo_project"
+            print_action_help(circle.clear_cache.__doc__.split('\n')[0], help_args, ex_args)
         else:
-            print(res)
+            if args.project and not args.username:
+                parser.error("username (-u) is required")
+            res = circle.clear_cache(username=args.username, project=args.project,
+                                     verbose=args.verbose)
+            if not args.verbose:
+                for k, v in res.iteritems():
+                    print("{}: {}".format(k, v))
+            else:
+                print(res)
     elif args.action == 'env':
-        if args.project and not args.username:
-            parser.error("username (-u) is required")
-        envvars = {}
-        for envvar in args.envvars:
-            if "=" in envvar:
-                name, value = envvar.split("=")
-                envvars[name] = value
-        res = circle.envvar(username=args.username, project=args.project,
-                            verbose=args.verbose, **envvars)
-        if not args.verbose:
-            for var in res:
-                print(var)
+        if is_action_help('env'):
+            help_args = OrderedDict()
+            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['--project|-p <str>'] = "\tThe project to list or set environment variables"
+            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            help_args['--set|-s KEY=VALUE'] = "\t(optional) Set a key/value pair (can include multiple)"
+
+            ex_args = OrderedDict()
+            ex_args["List a project's environment variables"] = "circlecli env -u foo_user -p foo_project"
+            ex_args["Set two environment variables"] = "circlecli env -u foo_user -p foo_project -s FOO=BAR -s BAZ=QUX"
+            print_action_help(circle.envvar.__doc__.split('\n')[0], help_args, ex_args)
         else:
-            print(res)
+            if not args.project:
+                parser.error("project (-p) is required")
+            if args.project and not args.username:
+                parser.error("username (-u) is required")
+            envvars = {}
+            for envvar in args.envvars:
+                if "=" in envvar:
+                    name, value = envvar.split("=")
+                    envvars[name] = value
+            res = circle.envvar(username=args.username, project=args.project,
+                                verbose=args.verbose, **envvars)
+            if not args.verbose:
+                for var in res:
+                    print(var)
+            else:
+                print(res)
     else:
         print("Unknown action: {}".format(args.action))

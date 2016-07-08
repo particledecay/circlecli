@@ -429,7 +429,7 @@ class CircleAPI(object):
         raise NotImplementedError(u"This method has not yet been implemented.")
 
     def envvar(self, username, project, verbose=False, **envvars):
-        """List or add environment variables to a project.
+        """List or add environment variables for a project.
 
         Args:
             username (str): the owner of the project
