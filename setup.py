@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from distutils.core import setup
+from setuptools import setup
 from os import path as op
 
 
@@ -13,6 +13,7 @@ def _read(filename):
 
 req_path = op.join('src', 'requirements.txt')
 install_requires = [ln for ln in _read(req_path).split('\n') if ln and not ln.startswith('#')]
+print repr(install_requires)
 
 
 setup(
@@ -40,6 +41,6 @@ setup(
         'Operating System :: Unix',
         'Topic :: Utilities',
     ],
-    scripts=['src/circlecli'],
+    scripts=['bin/circlecli'],
     use_2to3=True,
 )
