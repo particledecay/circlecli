@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.config:
+    if args.config or args.action == 'config':
         for k, v in config.iteritems():
             print("{} = {}".format(k, v))
         sys.exit(0)
@@ -101,7 +101,9 @@ if __name__ == "__main__":
         parser.error("you must specify an action")
 
     circle = CircleAPI(config['token'])
-    if args.action == 'me':
+    if args.action == 'help':
+        parser.print_help()
+    elif args.action == 'me':
         res = circle.me(args.verbose)
         if not args.verbose:
             for k, v in res.iteritems():
