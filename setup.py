@@ -11,7 +11,7 @@ def _read(filename):
         return ''
 
 
-req_path = op.join('src', 'requirements.txt')
+req_path = 'requirements.txt'
 install_requires = [ln for ln in _read(req_path).split('\n') if ln and not ln.startswith('#')]
 print repr(install_requires)
 
@@ -27,8 +27,7 @@ setup(
     license='MIT License',
     keywords=['circleci', 'cicd', 'rest', 'api', 'cli', 'command', 'command-line'],
     install_requires=install_requires,
-    package_dir={'circlecli': 'src'},
-    packages=['circlecli'],
+    py_modules=['circlecli'],
     classfiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
