@@ -64,7 +64,7 @@ if __name__ == "__main__":
     from collections import OrderedDict
     from os import path as op
 
-    from src.circle import CircleAPI
+    from circlecli import CircleAPI
 
     # read the config
     config = init_config(op.join(op.expanduser("~"), '.circlecli.ini'))
