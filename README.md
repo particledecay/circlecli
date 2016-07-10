@@ -1,6 +1,8 @@
 # CircleCLI
-[![CircleCI Status](https://circleci.com/gh/TheRealJoeLinux/circlecli.svg?style=shield&circle-token=5d41a4ad3ebf7b82cb08ff2b0539cf1acb2dfed9)](https://circleci.com/gh/TheRealJoeLinux/circlecli)
+
 Unofficial CircleCI cross-platform CLI tool, written in Python.
+
+![PyPI Version](https://img.shields.io/pypi/v/circlecli.svg) ![PyPI License](https://img.shields.io/pypi/l/circlecli.svg) ![CircleCI Status](https://img.shields.io/circleci/project/TheRealJoeLinux/circlecli.svg) ![Codecov Status](https://img.shields.io/codecov/c/github/TheRealJoeLinux/circlecli.svg)
 
 **_Note: This project is currently in beta. There will be bugs._**
 

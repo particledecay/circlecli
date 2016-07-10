@@ -11,3 +11,4 @@ test:
     - nosetests --cover-branches --with-coverage --cover-erase --cover-package=circlecli --cover-html --with-xunit
   post:
     - mkdir $CIRCLE_TEST_REPORTS/nosetests && cp nosetests.xml $CIRCLE_TEST_REPORTS/nosetests
+    - bash <(curl -s https://codecov.io/bash)
