@@ -8,6 +8,6 @@ dependencies:
 
 test:
   post:
-    - coverage run circlecli.py --include ./
-    - coverage report
+    - coverage run circlecli.py --omit /home/ubuntu/virtualenvs/venv-system/lib/python2.7/site-packages/*
+    - coverage report -m
     - coverage html
