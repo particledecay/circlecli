@@ -5,6 +5,7 @@ Tests for the CircleCLI API library.
 
 """
 
+import json
 import unittest
 
 from httmock import with_httmock
@@ -34,7 +35,7 @@ class TestCircleCLI(unittest.TestCase):
         results = self.circlecli.me(False)
         print results
         
-        self.assertIn(results, 'therealbarack')
+        self.assertEqual(results['Username'], 'therealbarack')
 
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_as_json(self):
