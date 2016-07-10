@@ -1,5 +1,5 @@
 # CircleCLI
-
+[![CircleCI Status](https://circleci.com/gh/TheRealJoeLinux/circlecli.svg?style=shield&circle-token=5d41a4ad3ebf7b82cb08ff2b0539cf1acb2dfed9)]
 Unofficial CircleCI cross-platform CLI tool, written in Python.
 
 **_Note: This project is currently in beta. There will be bugs._**
