@@ -8,6 +8,6 @@ dependencies:
 
 test:
   post:
-    - coverage run circlecli
+    - coverage run circlecli.py
     - coverage report
     - coverage html
