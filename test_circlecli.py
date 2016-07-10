@@ -45,7 +45,7 @@ class TestCircleCLI(unittest.TestCase):
 
         data = json.loads(results)
 
-        self.assertEqual(data['Username'], 'therealbarack')
+        self.assertEqual(data['login'], 'therealbarack')
 
 if __name__ == '__main__':
     unittest.main()
