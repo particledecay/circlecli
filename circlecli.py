@@ -146,7 +146,7 @@ class CircleAPI(object):
         return resp
 
     def builds(self, username=None, project=None, build_num=None, verbose=False):
-        """Last 30 build summaries for the account (or project if specified).
+        """Last 30 build summaries for the account (or for a project).
 
         Args:
             username (str): the owner of the project

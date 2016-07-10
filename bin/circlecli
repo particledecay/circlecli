@@ -71,12 +71,13 @@ if __name__ == "__main__":
 
     # parse command line args
     parser = argparse.ArgumentParser(description=docstring,
-                                     formatter_class=argparse.RawTextHelpFormatter)
+                                     formatter_class=argparse.RawTextHelpFormatter,
+                                     add_help=False)
     parser.add_argument('action', action='store', nargs='?',
-                        help="One of the following actions:\n"
-                             "\tme\t\n"
-                             "\tprojects\n")
+                        help="An action to perform (see below)")
     parser.add_argument('help', nargs='?', help="Get help on a particular action")
+    parser.add_argument('--help', '-h', dest='opt_help', action='store_true',
+                        help="Display this help text")
     parser.add_argument('--project', '-p', dest='project', action='store',
                         help="The target project name")
     parser.add_argument('--username', '-u', dest='username', action='store',
@@ -89,9 +90,37 @@ if __name__ == "__main__":
     parser.add_argument('--verbose', '-v', dest='verbose', action='store_true',
                         default=False, help="Return original full output from CircleCI")
     parser.add_argument('--set', '-s', dest='envvars', action='append',
-                        default=[], help="Set a variable (used with 'env' or 'trigger' command)")
+                        default=[], help="Set a variable (used with 'env' action)")
 
     args = parser.parse_args()
+
+    def print_full_help():
+        """Display the full parser help text, plus command help text."""
+        parser.print_help()
+        print_action_help(
+            """
+available actions:
+  me\t\t{}
+  projects\t{}
+  builds\t{}
+  artifacts\t{}
+  retry\t\t{}
+  add-key\t{}
+  clear-cache\t{}
+  env\t\t{}
+  <cmd> help\tDisplay help text for a particular action
+            """.format(
+                circle.me.__doc__.split('\n')[0],
+                circle.projects.__doc__.split('\n')[0],
+                circle.builds.__doc__.split('\n')[0],
+                circle.artifacts.__doc__.split('\n')[0],
+                circle.retry_build.__doc__.split('\n')[0],
+                circle.ssh_users.__doc__.split('\n')[0],
+                circle.clear_cache.__doc__.split('\n')[0],
+                circle.envvar.__doc__.split('\n')[0]
+            )
+        )
+        sys.exit(0)
 
     def is_action_help(action):
         """Check if the next arg is a help arg."""
@@ -111,8 +140,6 @@ if __name__ == "__main__":
             else:
                 for k, v in msg.iteritems():
                     print("{}: {}".format(k, v))
-        if not kwargs:
-            print("(no args)")
 
         if examples:
             print("")
@@ -127,20 +154,21 @@ if __name__ == "__main__":
             print("{} = {}".format(k, v))
         sys.exit(0)
 
+    # instantiate the CircleAPI class
+    circle = CircleAPI(config['token'])
+
     # help action
-    if args.help and not args.action:
-        parser.print_help()
-        sys.exit(0)
+    if args.opt_help or args.action == 'help':
+        print_full_help()
 
     # required args
     if not args.action:
         parser.error("you must specify an action")
 
-    circle = CircleAPI(config['token'])
     if args.action == 'me':
         if is_action_help('me'):
             help_args = OrderedDict()
-            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
 
             ex_args = OrderedDict()
             ex_args['Print information about your account'] = "circlecli me"
@@ -155,7 +183,7 @@ if __name__ == "__main__":
     elif args.action == 'projects':
         if is_action_help('projects'):
             help_args = OrderedDict()
-            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
 
             ex_args = OrderedDict()
             ex_args['List projects followed by your account'] = "circlecli projects"
@@ -170,10 +198,10 @@ if __name__ == "__main__":
     elif args.action == 'builds':
         if is_action_help('builds'):
             help_args = OrderedDict()
-            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
-            help_args['--project|-p <str>'] = "\t(optional) A project to get build info"
-            help_args['--build_num|-b <int>'] = "\t(optional) A build number to get specific build details"
-            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
+            help_args['  --build_num|-b <int>'] = "(optional) A build number to get specific build details"
+            help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
 
             ex_args = OrderedDict()
             ex_args['List builds for the account'] = "circlecli builds -u foo_user"
@@ -195,10 +223,10 @@ if __name__ == "__main__":
     elif args.action == 'artifacts':
         if is_action_help('artifacts'):
             help_args = OrderedDict()
-            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
-            help_args['--project|-p <str>'] = "\t(optional) A project to get build info"
-            help_args['--build_num|-b <int>'] = "\t(optional) A build number to get artifacts"
-            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
+            help_args['  --build_num|-b <int>'] = "(optional) A build number to get artifacts"
+            help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
 
             ex_args = OrderedDict()
             ex_args['List artifacts for a build'] = "circlecli artifacts -u foo_user -p foo_project -b 14"
@@ -218,10 +246,10 @@ if __name__ == "__main__":
     elif args.action == 'retry':
         if is_action_help('retry'):
             help_args = OrderedDict()
-            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
-            help_args['--project|-p <str>'] = "\t(optional) A project to get build info"
-            help_args['--build_num|-b <int>'] = "\t(optional) A build number to retry"
-            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
+            help_args['  --build_num|-b <int>'] = "(optional) A build number to retry"
+            help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
 
             ex_args = OrderedDict()
             ex_args['Retry a build'] = "circlecli retry -u foo_user -p foo_project -b 14"
@@ -237,10 +265,10 @@ if __name__ == "__main__":
     elif args.action == 'add-key':
         if is_action_help('add-key'):
             help_args = OrderedDict()
-            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
-            help_args['--project|-p <str>'] = "\t(optional) A project to get build info"
-            help_args['--build_num|-b <int>'] = "\t(optional) A build number to add the key"
-            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
+            help_args['  --build_num|-b <int>'] = "(optional) A build number to add the key"
+            help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
             print_action_help(circle.ssh_users.__doc__.split('\n')[0], help_args)
         else:
             if args.project and not args.username:
@@ -257,9 +285,9 @@ if __name__ == "__main__":
     elif args.action == 'clear-cache':
         if is_action_help('clear-cache'):
             help_args = OrderedDict()
-            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
-            help_args['--project|-p <str>'] = "\t(optional) The project's cache to clear"
-            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
+            help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['  --project|-p <str>'] = "\t(optional) The project's cache to clear"
+            help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
 
             ex_args = OrderedDict()
             ex_args["Clear a project's cache"] = "circlecli clear-cache -u foo_user -p foo_project"
@@ -277,10 +305,10 @@ if __name__ == "__main__":
     elif args.action == 'env':
         if is_action_help('env'):
             help_args = OrderedDict()
-            help_args['--username|-u <str>'] = "\tThe target username (or default if not provided)"
-            help_args['--project|-p <str>'] = "\tThe project to list or set environment variables"
-            help_args['--verbose|-v'] = "\t\t(optional) Print original full output from CircleCI"
-            help_args['--set|-s KEY=VALUE'] = "\t(optional) Set a key/value pair (can include multiple)"
+            help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
+            help_args['  --project|-p <str>'] = "\tThe project to list or set environment variables"
+            help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
+            help_args['  --set|-s KEY=VALUE'] = "\t(optional) Set a key/value pair (can include multiple)"
 
             ex_args = OrderedDict()
             ex_args["List a project's environment variables"] = "circlecli env -u foo_user -p foo_project"
