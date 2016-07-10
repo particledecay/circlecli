@@ -1,0 +1,45 @@
+{
+  "enrolled_betas" : [ ],
+  "in_beta_program" : true,
+  "selected_email" : "potus@whitehouse.gov",
+  "avatar_url" : "https://avatars.githubusercontent.com/u/8675309?v=3",
+  "trial_end" : "2015-10-31T07:05:29.209Z",
+  "admin" : null,
+  "basic_email_prefs" : "smart",
+  "sign_in_count" : 44,
+  "github_oauth_scopes" : [ "user:email", "repo" ],
+  "analytics_id" : "4ed02b0a-af20-f612-8b03-444fc2f1691a",
+  "name" : "Barack Obama",
+  "gravatar_id" : null,
+  "days_left_in_trial" : -253,
+  "parallelism" : 1,
+  "bitbucket_authorized" : true,
+  "github_id" : 8675309,
+  "bitbucket" : {
+    "id" : "{1d42cca1-58c1-49f6-9b5b-be3f358ba40e}",
+    "login" : "therealbarack"
+  },
+  "dev_admin" : false,
+  "all_emails" : [ "potus@whitehouse.gov", "b-man@whalumni.gov" ],
+  "created_at" : "2010-01-20T017:10:00.103Z",
+  "plan" : null,
+  "heroku_api_key" : null,
+  "projects" : {
+    "https://github.com/therealbarack/circlecli" : {
+      "on_dashboard" : true,
+      "emails" : "default"
+    },
+    "https://github.com/therealbarack/unstuff" : {
+      "on_dashboard" : true,
+      "emails" : "default"
+    },
+    "https://github.com/therealbarack/kidshomework" : {
+      "on_dashboard" : true,
+      "emails" : "default"
+    }
+  },
+  "login" : "therealbarack",
+  "organization_prefs" : { },
+  "containers" : 1,
+  "pusher_id" : "559adb9619ed1f53e3e5d4bd81a158f35f21d0dc"
+}

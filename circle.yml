@@ -1,0 +1,13 @@
+general:
+  artifacts:
+    - cover
+
+dependencies:
+  override:
+    - pip install -r requirements_dev.txt
+
+test:
+  override:
+    - nosetests --cover-branches --with-coverage --cover-erase --cover-package=circlecli --cover-html --with-xunit
+  post:
+    - mkdir $CIRCLE_TEST_REPORTS/nosetests && cp nosetests.xml $CIRCLE_TEST_REPORTS/nosetests
