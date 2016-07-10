@@ -9,14 +9,25 @@ import unittest
 
 from httmock import with_httmock
 
-import circlecli
+from circlecli import CircleAPI
 import mocks.circlecli
 
 
+class TestCircleCLISetup(unittest.TestCase):
+    
+    def test_valid_token(self)
+        circlecli = CircleAPI('moo')
+
+    def test_invalid_token(self)
+        circlecli = CircleAPI('foo')
+
 class TestCircleCLI(unittest.TestCase):
+    
+    def setup(self)
+        circlecli = CircleAPI('bar')
 
     @with_httmock(mocks.circlecli.resource_get)
-    def test_get_repository(self):
+    def test_me_false(self):
         owner = 'appneta'
         repo = 'burndown'
 
@@ -28,10 +39,10 @@ class TestCircleCLI(unittest.TestCase):
         self.assertEqual(results['name'], repo)
 
     @with_httmock(mocks.circlecli.resource_get)
-    def test_get_user(self):
+    def test_me_true(self):
         user = 'danriti'
 
-        results = circlecli.me(user)
+        results = circlecli.me(true)
 
         self.assertNotEqual(results, None)
         self.assertIsInstance(results, dict)
