@@ -31,15 +31,9 @@ class TestCircleCLI(unittest.TestCase):
 
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_false(self):
-        owner = 'appneta'
-        repo = 'burndown'
-
         results = self.circlecli.me(False)
 
-        self.assertNotEqual(results, None)
-        self.assertIsInstance(results, dict)
-        self.assertTrue('name' in results)
-        self.assertEqual(results['name'], repo)
+        self.assertTrue('therealbarack' in results)
 
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_true(self):
@@ -47,10 +41,7 @@ class TestCircleCLI(unittest.TestCase):
 
         results = self.circlecli.me(True)
 
-        self.assertNotEqual(results, None)
-        self.assertIsInstance(results, dict)
-        self.assertTrue('login' in results)
-        self.assertEqual(results['login'], user)
+        self.assertEqual(results['login'], 'therealbarack')
 
 if __name__ == '__main__':
     unittest.main()
