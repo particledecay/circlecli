@@ -15,6 +15,9 @@ import mocks.circlecli
 
 class TestCircleCLISetup(unittest.TestCase):
     
+    """ CircleAPI.init() should check the token is a 40-digit hex string
+        and return an error if it is not
+    """
     def test_valid_token(self):
         circlecli = CircleAPI('moo')
 
@@ -31,7 +34,7 @@ class TestCircleCLI(unittest.TestCase):
         owner = 'appneta'
         repo = 'burndown'
 
-        results = self.circlecli.me(false)
+        results = self.circlecli.me(False)
 
         self.assertNotEqual(results, None)
         self.assertIsInstance(results, dict)
@@ -42,7 +45,7 @@ class TestCircleCLI(unittest.TestCase):
     def test_me_true(self):
         user = 'danriti'
 
-        results = self.circlecli.me(true)
+        results = self.circlecli.me(True)
 
         self.assertNotEqual(results, None)
         self.assertIsInstance(results, dict)
