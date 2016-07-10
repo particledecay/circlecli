@@ -43,7 +43,7 @@ class TestCircleCLI(unittest.TestCase):
         results = self.circlecli.me(True)
         print results
 
-        data = json.load(results)
+        data = json.loads(results)
 
         self.assertEqual(data['Username'], 'therealbarack')
 
