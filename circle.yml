@@ -1,6 +1,6 @@
 general:
   artifacts:
-    - htmlcov
+    - cover
 
 dependencies:
   override:
@@ -8,6 +8,6 @@ dependencies:
 
 test:
   override:
-    - nosetests --cover-branches --with-coverage --cover-erase --cover-package=circlecli --cover-html
+    - nosetests --cover-branches --with-coverage --cover-erase --cover-package=circlecli --cover-html --with-xunit
   post:
     - ls
