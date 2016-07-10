@@ -8,4 +8,5 @@ dependencies:
 
 test:
   post:
+    - coverage report -m
     - coverage html
