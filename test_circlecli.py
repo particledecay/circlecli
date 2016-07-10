@@ -24,14 +24,14 @@ class TestCircleCLISetup(unittest.TestCase):
 class TestCircleCLI(unittest.TestCase):
     
     def setup(self):
-        circlecli = CircleAPI('bar')
+        self.circlecli = CircleAPI('bar')
 
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_false(self):
         owner = 'appneta'
         repo = 'burndown'
 
-        results = circlecli.me(false)
+        results = self.circlecli.me(false)
 
         self.assertNotEqual(results, None)
         self.assertIsInstance(results, dict)
@@ -42,7 +42,7 @@ class TestCircleCLI(unittest.TestCase):
     def test_me_true(self):
         user = 'danriti'
 
-        results = circlecli.me(true)
+        results = self.circlecli.me(true)
 
         self.assertNotEqual(results, None)
         self.assertIsInstance(results, dict)
