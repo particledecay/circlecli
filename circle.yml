@@ -7,7 +7,7 @@ dependencies:
     - pip install -r requirements_dev.txt
 
 test:
-  override:
-    - coverage run
+  post:
+    - coverage run circlecli
     - coverage report
     - coverage html
