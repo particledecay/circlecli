@@ -7,6 +7,5 @@ dependencies:
     - pip install -r requirements_dev.txt
 
 test:
-  override:
-    - mkdir $CIRCLE_TEST_REPORTS/junit
-    - nosetests --with-xunit --xunit-file=$CIRCLE_TEST_REPORTS/junit/results.xml -cover-package=circlecli --cover-html --cover-html-dir=htmlcov
+  post:
+    - coverage html
