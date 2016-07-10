@@ -33,7 +33,7 @@ class TestCircleCLI(unittest.TestCase):
     def test_me_as_dict(self):
         results = self.circlecli.me(False)
         print results
-
+        
         self.assertIn(results, 'therealbarack')
 
     @with_httmock(mocks.circlecli.resource_get)
@@ -42,7 +42,9 @@ class TestCircleCLI(unittest.TestCase):
         results = self.circlecli.me(True)
         print results
 
-        self.assertEqual(results['Username'], 'therealbarack')
+        data = json.load(results)
+
+        self.assertEqual(data['Username'], 'therealbarack')
 
 if __name__ == '__main__':
     unittest.main()
