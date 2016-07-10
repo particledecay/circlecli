@@ -30,19 +30,19 @@ class TestCircleCLI(unittest.TestCase):
         self.circlecli = CircleAPI('bar')
 
     @with_httmock(mocks.circlecli.resource_get)
-    def test_me_false(self):
+    def test_me_as_dict(self):
         results = self.circlecli.me(False)
         print results
 
-        self.assertTrue('therealbarack' in results)
+        self.assertIn(results, 'therealbarack')
 
     @with_httmock(mocks.circlecli.resource_get)
-    def test_me_true(self):
+    def test_me_as_json(self):
 
         results = self.circlecli.me(True)
         print results
 
-        self.assertEqual(results['login'], 'therealbarack')
+        self.assertEqual(results['Username'], 'therealbarack')
 
 if __name__ == '__main__':
     unittest.main()
