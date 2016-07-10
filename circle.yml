@@ -1,3 +1,13 @@
-test:
+general:
+  artifacts:
+    - htmlcov
+
+dependencies:
   override:
     - pip install -r requirements_dev.txt
+
+test:
+  override:
+    - coverage run
+    - coverage report
+    - coverage html
