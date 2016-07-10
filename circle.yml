@@ -10,4 +10,4 @@ test:
   post:
     - coverage run circlecli.py
     - coverage report -m --omit /home/ubuntu/virtualenvs/venv-system/lib/python2.7/site-packages/*
-    - coverage html -m --omit /home/ubuntu/virtualenvs/venv-system/lib/python2.7/site-packages/*
+    - coverage html --omit /home/ubuntu/virtualenvs/venv-system/lib/python2.7/site-packages/*
