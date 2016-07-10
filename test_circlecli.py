@@ -23,7 +23,7 @@ class TestCircleCLISetup(unittest.TestCase):
 
 class TestCircleCLI(unittest.TestCase):
     
-    def setup(self):
+    def setUp(self):
         self.circlecli = CircleAPI('bar')
 
     @with_httmock(mocks.circlecli.resource_get)
