@@ -7,6 +7,5 @@ dependencies:
     - pip install -r requirements_dev.txt
 
 test:
-  post:
-    - coverage report -m
-    - coverage html
+  override:
+    - nosetests --cover-branches --with-coverage --cover-erase --cover-package=circlecli --cover-html 
