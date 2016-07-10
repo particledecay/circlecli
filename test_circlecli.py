@@ -15,15 +15,15 @@ import mocks.circlecli
 
 class TestCircleCLISetup(unittest.TestCase):
     
-    def test_valid_token(self)
+    def test_valid_token(self):
         circlecli = CircleAPI('moo')
 
-    def test_invalid_token(self)
+    def test_invalid_token(self):
         circlecli = CircleAPI('foo')
 
 class TestCircleCLI(unittest.TestCase):
     
-    def setup(self)
+    def setup(self):
         circlecli = CircleAPI('bar')
 
     @with_httmock(mocks.circlecli.resource_get)
