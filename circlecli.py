@@ -179,7 +179,7 @@ class CircleAPI(object):
                 o['Tag    '] = build['vcs_tag']
             else:
                 o['Branch '] = build['branch'] or 'Unknown'
-            dt = dp.parse(build['queued_at']).astimezone(tz.tzlocal())
+            dt = dp.parse(build.get('queued_at', build.get('usage_queued_at'))).astimezone(tz.tzlocal())
             o['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
             o['Trigger'] = build['why']
             o['URL    '] = build['build_url']
@@ -228,7 +228,7 @@ class CircleAPI(object):
             resp['Tag    '] = r_json['vcs_tag']
         else:
             resp['Branch '] = r_json['branch'] or 'Unknown'
-        dt = dp.parse(r_json['queued_at']).astimezone(tz.tzlocal())
+        dt = dp.parse(r_json.get('queued_at', r_json.get('usage_queued_at'))).astimezone(tz.tzlocal())
         resp['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
         resp['Trigger'] = r_json['why']
         resp['URL    '] = r_json['build_url']
@@ -259,7 +259,7 @@ class CircleAPI(object):
             resp['Tag    '] = r_json['vcs_tag']
         else:
             resp['Branch '] = r_json['branch'] or 'Unknown'
-        dt = dp.parse(r_json['queued_at']).astimezone(tz.tzlocal())
+        dt = dp.parse(r_json.get('queued_at', r_json.get('usage_queued_at'))).astimezone(tz.tzlocal())
         resp['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
         resp['Trigger'] = r_json['why']
         resp['URL    '] = r_json['build_url']
@@ -279,24 +279,7 @@ class CircleAPI(object):
         Returns:
             (dict) confirmation of the added user
         """
-        r_json = self._post("project/{username}/{project}/{build_num}/ssh-users".format(**locals()))
-        if verbose:
-            return json.dumps(r_json, indent=2)
-
-        resp = OrderedDict()
-        resp['Build# '] = r_json['build_num']
-        resp['Author '] = '{} <{}>'.format(r_json['author_name'], r_json['author_email']) if r_json['author_email'] else r_json['author_email']
-        if r_json['vcs_tag']:
-            resp['Tag    '] = r_json['vcs_tag']
-        else:
-            resp['Branch '] = r_json['branch'] or 'Unknown'
-        dt = dp.parse(r_json['queued_at']).astimezone(tz.tzlocal())
-        resp['Queued '] = dt.strftime('%a, %b %d, %Y %I:%M%p %Z')
-        resp['Trigger'] = r_json['why']
-        resp['URL    '] = r_json['build_url']
-        resp['Result '] = r_json['outcome']
-
-        return resp
+        raise NotImplementedError(u"This method has not yet been implemented.")
 
     def new_build(self, username, project, branch="master", data=None, verbose=False):
         """Trigger a new build.

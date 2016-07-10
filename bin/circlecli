@@ -105,7 +105,7 @@ available actions:
   builds\t{}
   artifacts\t{}
   retry\t\t{}
-  add-key\t{}
+  cancel\t{}
   clear-cache\t{}
   env\t\t{}
   <cmd> help\tDisplay help text for a particular action
@@ -115,7 +115,7 @@ available actions:
                 circle.builds.__doc__.split('\n')[0],
                 circle.artifacts.__doc__.split('\n')[0],
                 circle.retry_build.__doc__.split('\n')[0],
-                circle.ssh_users.__doc__.split('\n')[0],
+                circle.cancel_build.__doc__.split('\n')[0],
                 circle.clear_cache.__doc__.split('\n')[0],
                 circle.envvar.__doc__.split('\n')[0]
             )
@@ -204,7 +204,7 @@ available actions:
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
 
             ex_args = OrderedDict()
-            ex_args['List builds for the account'] = "circlecli builds -u foo_user"
+            ex_args['List builds for the account'] = "circlecli builds"
             ex_args['List builds for a project'] = "circlecli builds -u foo_user -p foo_project"
             ex_args["List a specific build's details"] = "circlecli builds -u foo_user -p foo_project -b 14"
             print_action_help(circle.builds.__doc__.split('\n')[0], help_args, ex_args)
@@ -261,22 +261,29 @@ available actions:
                 parser.error("build-num (-b) is required")
             res = circle.retry_build(username=args.username, project=args.project,
                                      build_num=args.build_num, verbose=args.verbose)
-            print(res)
-    elif args.action == 'add-key':
-        if is_action_help('add-key'):
+            if not args.verbose:
+                for k, v in res.iteritems():
+                    print("{}: {}".format(k, v))
+            else:
+                print(res)
+    elif args.action == 'cancel':
+        if is_action_help('cancel'):
             help_args = OrderedDict()
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
-            help_args['  --build_num|-b <int>'] = "(optional) A build number to add the key"
+            help_args['  --build_num|-b <int>'] = "(optional) A build number to cancel"
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
-            print_action_help(circle.ssh_users.__doc__.split('\n')[0], help_args)
+
+            ex_args = OrderedDict()
+            ex_args['Cancel a build'] = "circlecli cancel -u foo_user -p foo_project -b 14"
+            print_action_help(circle.cancel_build.__doc__.split('\n')[0], help_args, ex_args)
         else:
             if args.project and not args.username:
                 parser.error("username (-u) is required")
             if not args.build_num:
                 parser.error("build-num (-b) is required")
-            res = circle.ssh_users(username=args.username, project=args.project,
-                                   build_num=args.build_num, verbose=args.verbose)
+            res = circle.cancel_build(username=args.username, project=args.project,
+                                      build_num=args.build_num, verbose=args.verbose)
             if not args.verbose:
                 for k, v in res.iteritems():
                     print("{}: {}".format(k, v))
