@@ -8,7 +8,4 @@ dependencies:
 
 test:
   override:
-    - nosetests -cover-package=circlecli
-  post:
-    - coverage report -m
-    - coverage html
+    - nosetests -cover-package=circlecli --cover-html
