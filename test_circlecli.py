@@ -32,14 +32,15 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_false(self):
         results = self.circlecli.me(False)
+        print results
 
         self.assertTrue('therealbarack' in results)
 
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_true(self):
-        user = 'danriti'
 
         results = self.circlecli.me(True)
+        print results
 
         self.assertEqual(results['login'], 'therealbarack')
 
