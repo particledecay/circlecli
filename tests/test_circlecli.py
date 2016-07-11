@@ -35,7 +35,7 @@ class TestCircleCLI(unittest.TestCase):
     """
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_as_dict(self):
-        results = self.circlecli.me(False)
+        results = self.circlecli.me(verbose=False)
 
         self.assertEqual(results['Username'], 'therealbarack')
 
@@ -45,7 +45,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_as_json(self):
 
-        results = self.circlecli.me(True)
+        results = self.circlecli.me(verbose=True)
 
         data = json.loads(results)
 
@@ -56,7 +56,7 @@ class TestCircleCLI(unittest.TestCase):
     """
     @with_httmock(mocks.circlecli.resource_get)
     def test_projects_as_dict(self):
-        results = self.circlecli.projects(False)
+        results = self.circlecli.projects(verbose=False)
 
         self.assertEqual(results, ['therealbarack/circlecli'])
 
@@ -66,7 +66,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     def test_projects_as_json(self):
 
-        results = self.circlecli.projects(True)
+        results = self.circlecli.projects(verbose=True)
 
         data = json.loads(results)
 
@@ -77,7 +77,7 @@ class TestCircleCLI(unittest.TestCase):
     """
     @with_httmock(mocks.circlecli.resource_get)
     def test_builds_as_dict(self):
-        results = self.circlecli.builds(False)
+        results = self.circlecli.builds(verbose=False)
         print results
         
         self.assertEqual(results[0]['Result '], 'failed')
@@ -88,7 +88,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     def test_builds_as_json(self):
 
-        results = self.circlecli.builds(True)
+        results = self.circlecli.builds(verbose=True)
         print results
 
         data = json.loads(results)
@@ -100,7 +100,7 @@ class TestCircleCLI(unittest.TestCase):
     """
     @with_httmock(mocks.circlecli.resource_get)
     def test_builds_with_project_as_dict(self):
-        results = self.circlecli.builds('therealbarack', 'circlecli', 1, False)
+        results = self.circlecli.builds('therealbarack', 'circlecli', 1, verbose=False)
         print results
         
         self.assertEqual(results[0]['Result '], 'no_tests')
@@ -111,7 +111,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     def test_builds_with_project_as_json(self):
 
-        results = self.circlecli.builds('therealbarack', 'circlecli', 1, True)
+        results = self.circlecli.builds('therealbarack', 'circlecli', 1, verbose=True)
         print results
 
         data = json.loads(results)
@@ -124,7 +124,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_artifacts_as_dict(self):
-        results = self.circlecli.artifacts(False)
+        results = self.circlecli.artifacts(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -136,7 +136,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_artifacts_as_json(self):
 
-        results = self.circlecli.artifacts(True)
+        results = self.circlecli.artifacts(verbose=True)
         print results
 
         data = json.loads(results)
@@ -149,7 +149,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_retry_build_as_dict(self):
-        results = self.circlecli.retry_build(False)
+        results = self.circlecli.retry_build(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -161,7 +161,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_retry_build_as_json(self):
 
-        results = self.circlecli.retry_build(True)
+        results = self.circlecli.retry_build(verbose=True)
         print results
 
         data = json.loads(results)
@@ -174,7 +174,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_cancel_build_as_dict(self):
-        results = self.circlecli.cancel_build(False)
+        results = self.circlecli.cancel_build(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -186,7 +186,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_cancel_build_as_json(self):
 
-        results = self.circlecli.cancel_build(True)
+        results = self.circlecli.cancel_build(verbose=True)
         print results
 
         data = json.loads(results)
@@ -199,7 +199,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_ssh_users_as_dict(self):
-        results = self.circlecli.ssh_users(False)
+        results = self.circlecli.ssh_users(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -211,7 +211,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_ssh_users_as_json(self):
 
-        results = self.circlecli.ssh_users(True)
+        results = self.circlecli.ssh_users(verbose=True)
         print results
 
         data = json.loads(results)
@@ -224,7 +224,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_new_build_as_dict(self):
-        results = self.circlecli.new_build(False)
+        results = self.circlecli.new_build(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -236,7 +236,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_new_build_as_json(self):
 
-        results = self.circlecli.new_build(True)
+        results = self.circlecli.new_build(verbose=True)
         print results
 
         data = json.loads(results)
@@ -249,7 +249,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_create_ssh_as_dict(self):
-        results = self.circlecli.create_ssh(False)
+        results = self.circlecli.create_ssh(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -261,7 +261,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_create_ssh_as_json(self):
 
-        results = self.circlecli.create_ssh(True)
+        results = self.circlecli.create_ssh(verbose=True)
         print results
 
         data = json.loads(results)
@@ -274,7 +274,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_list_checkout_keys_as_dict(self):
-        results = self.circlecli.list_checkout_keys(False)
+        results = self.circlecli.list_checkout_keys(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -286,7 +286,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_list_checkout_keys_as_json(self):
 
-        results = self.circlecli.list_checkout_keys(True)
+        results = self.circlecli.list_checkout_keys(verbose=True)
         print results
 
         data = json.loads(results)
@@ -299,7 +299,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_create_checkout_key_as_dict(self):
-        results = self.circlecli.create_checkout_key(False)
+        results = self.circlecli.create_checkout_key(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -311,7 +311,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_create_checkout_key_as_json(self):
 
-        results = self.circlecli.create_checkout_key(True)
+        results = self.circlecli.create_checkout_key(verbose=True)
         print results
 
         data = json.loads(results)
@@ -324,7 +324,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_checkout_key_as_dict(self):
-        results = self.circlecli.checkout_key(False)
+        results = self.circlecli.checkout_key(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -336,7 +336,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_checkout_key_as_json(self):
 
-        results = self.circlecli.checkout_key(True)
+        results = self.circlecli.checkout_key(verbose=True)
         print results
 
         data = json.loads(results)
@@ -349,7 +349,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_delete_checkout_key_as_dict(self):
-        results = self.circlecli.delete_checkout_key(False)
+        results = self.circlecli.delete_checkout_key(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -361,7 +361,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_delete_checkout_key_as_json(self):
 
-        results = self.circlecli.delete_checkout_key(True)
+        results = self.circlecli.delete_checkout_key(verbose=True)
         print results
 
         data = json.loads(results)
@@ -374,7 +374,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_clear_cache_as_dict(self):
-        results = self.circlecli.clear_cache(False)
+        results = self.circlecli.clear_cache(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -386,7 +386,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_clear_cache_as_json(self):
 
-        results = self.circlecli.clear_cache(True)
+        results = self.circlecli.clear_cache(verbose=True)
         print results
 
         data = json.loads(results)
@@ -399,7 +399,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_add_circle_key_as_dict(self):
-        results = self.circlecli.add_circle_key(False)
+        results = self.circlecli.add_circle_key(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -411,7 +411,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_add_circle_key_as_json(self):
 
-        results = self.circlecli.add_circle_key(True)
+        results = self.circlecli.add_circle_key(verbose=True)
         print results
 
         data = json.loads(results)
@@ -424,7 +424,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_add_heroku_key_as_dict(self):
-        results = self.circlecli.add_heroku_key(False)
+        results = self.circlecli.add_heroku_key(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -436,7 +436,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_add_heroku_key_as_json(self):
 
-        results = self.circlecli.add_heroku_key(True)
+        results = self.circlecli.add_heroku_key(verbose=True)
         print results
 
         data = json.loads(results)
@@ -449,7 +449,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_envar_as_dict(self):
-        results = self.circlecli.envar(False)
+        results = self.circlecli.envar(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -461,7 +461,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_envar_as_json(self):
 
-        results = self.circlecli.envar(True)
+        results = self.circlecli.envar(verbose=True)
         print results
 
         data = json.loads(results)
