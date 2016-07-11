@@ -101,7 +101,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     @unittest.skip("test not written yet")
     def test_envar_as_dict(self):
-        results = self.circlecli.envar(verbose=False)
+        results = self.circlecli.envvar(verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -113,7 +113,7 @@ class TestCircleCLI(unittest.TestCase):
     @unittest.skip("test not written yet")
     def test_envar_as_json(self):
 
-        results = self.circlecli.envar(verbose=True)
+        results = self.circlecli.envvar(verbose=True)
         print results
 
         data = json.loads(results)
