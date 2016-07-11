@@ -75,7 +75,7 @@ class TestCircleCLI(unittest.TestCase):
     """ CircleAPI.clear_cache()
         
     """
-    @with_httmock(mocks.circlecli.resource_get)
+    @with_httmock(mocks.circlecli.resource_delete)
     def test_clear_cache_as_dict(self):
         results = self.circlecli.clear_cache('therealbarack', 'circlecli', verbose=False)
         print results
@@ -85,7 +85,7 @@ class TestCircleCLI(unittest.TestCase):
     """ CircleAPI.clear_cache()
         
     """
-    @with_httmock(mocks.circlecli.resource_get)
+    @with_httmock(mocks.circlecli.resource_delete)
     def test_clear_cache_as_json(self):
 
         results = self.circlecli.clear_cache('therealbarack', 'circlecli', verbose=True)
