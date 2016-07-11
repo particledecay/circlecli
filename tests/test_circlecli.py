@@ -80,7 +80,7 @@ class TestCircleCLI(unittest.TestCase):
         results = self.circlecli.builds(False)
         print results
         
-        self.assertEqual(results['Result '], 'failed')
+        self.assertEqual(results[0]['Result '], 'failed')
 
     """ CircleAPI.builds()
         test results as json
