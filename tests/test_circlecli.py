@@ -36,8 +36,7 @@ class TestCircleCLI(unittest.TestCase):
     @with_httmock(mocks.circlecli.resource_get)
     def test_me_as_dict(self):
         results = self.circlecli.me(False)
-        print results
-        
+
         self.assertEqual(results['Username'], 'therealbarack')
 
     """ CircleAPI.me()
@@ -47,7 +46,6 @@ class TestCircleCLI(unittest.TestCase):
     def test_me_as_json(self):
 
         results = self.circlecli.me(True)
-        print results
 
         data = json.loads(results)
 
@@ -61,7 +59,7 @@ class TestCircleCLI(unittest.TestCase):
         results = self.circlecli.projects(False)
         print results
         
-        self.assertEqual(results['Username'], 'therealbarack')
+        self.assertEqual(results, ['therealbarack/circlecli'])
 
     """ CircleAPI.projects()
         
@@ -74,7 +72,7 @@ class TestCircleCLI(unittest.TestCase):
 
         data = json.loads(results)
 
-        self.assertEqual(data['login'], 'therealbarack')
+        self.assertEqual(data[0]['last_success'], 'therealbarack')
 
     """ CircleAPI.builds()
         
