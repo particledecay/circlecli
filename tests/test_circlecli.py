@@ -101,7 +101,7 @@ class TestCircleCLI(unittest.TestCase):
         test results as dict with project        
     """
     @with_httmock(mocks.circlecli.resource_get)
-    def test_builds_as_dict(self):
+    def test_builds_with_project_as_dict(self):
         results = self.circlecli.builds('therealbarack', 'circlecli', 1, False)
         print results
         
@@ -111,7 +111,7 @@ class TestCircleCLI(unittest.TestCase):
         test results as json with project        
     """
     @with_httmock(mocks.circlecli.resource_get)
-    def test_builds_as_json(self):
+    def test_builds_with_project_as_json(self):
 
         results = self.circlecli.builds('therealbarack', 'circlecli', 1, True)
         print results
