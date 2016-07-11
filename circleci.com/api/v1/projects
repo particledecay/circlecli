@@ -31,7 +31,7 @@
         "outcome" : "failed",
         "status" : "failed",
         "build_num" : 21,
-        "vcs_revision" : 115d8e15d481871aaf8e4631692fe5291755bccb",
+        "vcs_revision" : "115d8e15d481871aaf8e4631692fe5291755bccb",
         "pushed_at" : "2015-11-11T07:33:15.000Z",
         "added_at" : "2015-11-11T07:34:17.490Z"
       }, {
