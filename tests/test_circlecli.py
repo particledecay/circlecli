@@ -80,7 +80,7 @@ class TestCircleCLI(unittest.TestCase):
         results = self.circlecli.clear_cache('therealbarack', 'circlecli', verbose=False)
         print results
         
-        self.assertEqual(results['Username'], 'therealbarack')
+        self.assertEqual(results['status'], 'build caches deleted')
 
     """ CircleAPI.clear_cache()
         
@@ -93,7 +93,7 @@ class TestCircleCLI(unittest.TestCase):
 
         data = json.loads(results)
 
-        self.assertEqual(data['login'], 'therealbarack')
+        self.assertEqual(data['status'], 'build caches deleted')
 
     """ CircleAPI.envar()
         
