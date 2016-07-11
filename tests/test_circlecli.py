@@ -75,17 +75,40 @@ class TestCircleCLI(unittest.TestCase):
         self.assertEqual(data[0]['branches']['master']['last_success']['status'], 'fixed')
 
     """ CircleAPI.builds()
+        test results as dict
+    """
+    @with_httmock(mocks.circlecli.resource_get)
+    def test_builds_as_dict(self):
+        results = self.circlecli.builds(False)
+        print results
         
+        self.assertEqual(results['Username'], 'therealbarack')
+
+    """ CircleAPI.builds()
+        test results as json
+    """
+    @with_httmock(mocks.circlecli.resource_get)
+    def test_builds_as_json(self):
+
+        results = self.circlecli.builds(True)
+        print results
+
+        data = json.loads(results)
+
+        self.assertEqual(data['login'], 'therealbarack')
+
+    """ CircleAPI.builds()
+        test results as dict with project        
     """
     @with_httmock(mocks.circlecli.resource_get)
     def test_builds_as_dict(self):
         results = self.circlecli.builds('therealbarack', 'circlecli', 1, False)
         print results
         
-        self.assertEqual(results['Username'], 'therealbarack')
+        self.assertEqual(results[0]['Result '], 'no_tests')
 
     """ CircleAPI.builds()
-        
+        test results as json with project        
     """
     @with_httmock(mocks.circlecli.resource_get)
     def test_builds_as_json(self):
@@ -95,7 +118,7 @@ class TestCircleCLI(unittest.TestCase):
 
         data = json.loads(results)
 
-        self.assertEqual(data['login'], 'therealbarack')
+        self.assertEqual(data['outcome'], 'no_tests')
 
     """ CircleAPI.artifacts()
         
