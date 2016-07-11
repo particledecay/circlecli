@@ -1,0 +1,112 @@
+[ {
+  "irc_server" : null,
+  "ssh_keys" : [ ],
+  "branches" : {
+    "master" : {
+      "last_non_success" : {
+        "outcome" : "failed",
+        "status" : "failed",
+        "build_num" : 21,
+        "vcs_revision" : "115d8e15d481871aaf8e4631692fe5291755bccb",
+        "pushed_at" : "2015-11-11T07:33:15.000Z",
+        "added_at" : "2015-11-11T07:34:17.490Z"
+      },
+      "last_success" : {
+        "outcome" : "success",
+        "status" : "fixed",
+        "build_num" : 22,
+        "vcs_revision" : "115d8e15d481871aaf8e4631692fe5291755bccb",
+        "pushed_at" : "2015-11-11T07:35:47.000Z",
+        "added_at" : "2015-11-11T07:36:46.087Z"
+      },
+      "pusher_logins" : [ "therealbarack" ],
+      "recent_builds" : [ {
+        "outcome" : "success",
+        "status" : "fixed",
+        "build_num" : 22,
+        "vcs_revision" : "115d8e15d481871aaf8e4631692fe5291755bccb",
+        "pushed_at" : "2015-11-11T07:35:47.000Z",
+        "added_at" : "2015-11-11T07:36:46.087Z"
+      }, {
+        "outcome" : "failed",
+        "status" : "failed",
+        "build_num" : 21,
+        "vcs_revision" : "115d8e15d481871aaf8e4631692fe5291755bccb",
+        "pushed_at" : "2015-11-11T07:33:15.000Z",
+        "added_at" : "2015-11-11T07:34:17.490Z"
+      }, {
+        "outcome" : "failed",
+        "status" : "failed",
+        "build_num" : 20,
+        "vcs_revision" : "115d8e15d481871aaf8e4631692fe5291755bccb",
+        "pushed_at" : "2015-11-11T07:26:22.000Z",
+        "added_at" : "2015-11-11T07:27:20.076Z"
+      }, {
+        "outcome" : "failed",
+        "status" : "failed",
+        "build_num" : 19,
+        "vcs_revision" : "115d8e15d481871aaf8e4631692fe5291755bccb",
+        "pushed_at" : "2015-11-11T07:22:57.000Z",
+        "added_at" : "2015-11-11T07:24:53.798Z"
+      }, {
+        "outcome" : "failed",
+        "status" : "failed",
+        "build_num" : 18,
+        "vcs_revision" : "115d8e15d481871aaf8e4631692fe5291755bccb",
+        "pushed_at" : "2015-10-18T01:50:54.000Z",
+        "added_at" : "2015-10-18T01:51:52.766Z"
+      } ],
+      "running_builds" : [ ]
+    }
+  },
+  "irc_keyword" : null,
+  "oss" : true,
+  "slack_channel" : null,
+  "hipchat_notify_prefs" : null,
+  "reponame" : "circlecli",
+  "dependencies" : "",
+  "aws" : {
+    "keypair" : null
+  },
+  "slack_webhook_url" : null,
+  "irc_channel" : null,
+  "parallel" : 1,
+  "campfire_subdomain" : null,
+  "followed" : true,
+  "username" : "therealbarack",
+  "campfire_notify_prefs" : null,
+  "hipchat_notify" : null,
+  "heroku_deploy_user" : null,
+  "irc_username" : null,
+  "slack_notify_prefs" : null,
+  "scopes" : [ "write-settings", "view-builds", "read-settings", "trigger-builds", "all", "status", "none" ],
+  "campfire_room" : null,
+  "hipchat_api_token" : null,
+  "campfire_token" : null,
+  "slack_subdomain" : null,
+  "has_usable_key" : true,
+  "setup" : "",
+  "vcs_type" : "github",
+  "feature_flags" : {
+    "trusty-beta" : false,
+    "osx" : false,
+    "set-github-status" : true,
+    "build-prs-only" : false,
+    "fleet" : null,
+    "build-fork-prs" : false,
+    "junit" : true,
+    "oss" : true
+  },
+  "irc_password" : null,
+  "compile" : "",
+  "irc_notify_prefs" : null,
+  "extra" : "",
+  "language" : "Python",
+  "hipchat_room" : null,
+  "flowdock_api_token" : null,
+  "slack_channel_override" : null,
+  "vcs_url" : "https://github.com/therealbarack/circlecli",
+  "default_branch" : "master",
+  "slack_api_token" : null,
+  "test" : ""
+} ]
