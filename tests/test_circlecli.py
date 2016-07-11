@@ -70,7 +70,7 @@ class TestCircleCLI(unittest.TestCase):
 
         data = json.loads(results)
 
-        self.assertEqual(data[0]['subject']['master']['last_success']['status'], 'fixed')
+        self.assertEqual(data[0]['branches']['master']['last_success']['status'], 'fixed')
 
     """ CircleAPI.builds()
         test results as dict
@@ -80,7 +80,7 @@ class TestCircleCLI(unittest.TestCase):
         results = self.circlecli.builds(False)
         print results
         
-        self.assertEqual(results['Username'], 'therealbarack')
+        self.assertEqual(results['Result '], 'failed')
 
     """ CircleAPI.builds()
         test results as json
