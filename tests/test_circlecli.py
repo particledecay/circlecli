@@ -76,9 +76,8 @@ class TestCircleCLI(unittest.TestCase):
         
     """
     @with_httmock(mocks.circlecli.resource_get)
-    @unittest.skip("test not written yet")
     def test_clear_cache_as_dict(self):
-        results = self.circlecli.clear_cache(verbose=False)
+        results = self.circlecli.clear_cache('therealbarack', 'circlecli', verbose=False)
         print results
         
         self.assertEqual(results['Username'], 'therealbarack')
@@ -87,10 +86,9 @@ class TestCircleCLI(unittest.TestCase):
         
     """
     @with_httmock(mocks.circlecli.resource_get)
-    @unittest.skip("test not written yet")
     def test_clear_cache_as_json(self):
 
-        results = self.circlecli.clear_cache(verbose=True)
+        results = self.circlecli.clear_cache('therealbarack', 'circlecli', verbose=True)
         print results
 
         data = json.loads(results)
