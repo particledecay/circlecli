@@ -103,6 +103,43 @@ class CircleAPI(object):
 
         return r.json()
 
+    def _filter_single(self, response, filters):
+        """Filter a single response object by matching a provided set of filters.
+
+        Args:
+            response (dict): a response object
+            filters (dict): a set of key/value pairs to match
+
+        Returns:
+            (dict) the response if it matches all filters
+        """
+        resp_keys = response.keys()
+        for k, v in filters.iteritems():
+            if k not in resp_keys:
+                return
+            if response[k] != v:
+                return
+        return response
+
+    def _filter(self, response, filters={}):
+        """Filter response by matching a provided set of filters.
+
+        Args:
+            filters (dict): a set of key/value pairs to match
+
+        Returns:
+            (list/dict) the original response filtered by the provided filters
+        """
+        if not filters:
+            return response
+
+        if isinstance(response, list):
+            new_response = [r for r in response if self._filter_single(r, filters)]
+        else:
+            new_response = self._filter_single(response, filters)
+
+        return new_response
+
     def me(self, verbose=False):
         """Provide information about the signed in user.
 
@@ -129,23 +166,25 @@ class CircleAPI(object):
 
         return resp
 
-    def projects(self, verbose=False):
+    def projects(self, verbose=False, filters={}):
         """List of all the projects you're following on CircleCI.
 
         Args:
             verbose (bool): whether to return filtered info or the full response
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (list) a list of all the projects and project info
         """
-        r_json = self._get('projects')
+        r_json = self._filter(self._get('projects'), filters)
         if verbose:
             return json.dumps(r_json, indent=2)
 
         resp = ['{}/{}'.format(j['username'], j['reponame']) for j in r_json]
         return resp
 
-    def builds(self, username=None, project=None, build_num=None, verbose=False):
+    def builds(self, username=None, project=None, build_num=None, verbose=False,
+               filters={}):
         """Last 30 build summaries for the account (or for a project).
 
         Args:
@@ -153,6 +192,7 @@ class CircleAPI(object):
             project (str): the project name
             build_num (int): the build number
             verbose (bool): whether to return filtered info or the full response
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (list) the last 30 build summaries
@@ -164,6 +204,7 @@ class CircleAPI(object):
                 r_json = self._get('project/{username}/{project}'.format(**locals()))
         else:
             r_json = self._get('recent-builds')
+        r_json = self._filter(r_json, filters)
 
         if verbose:
             return json.dumps(r_json, indent=2)
@@ -188,7 +229,7 @@ class CircleAPI(object):
 
         return resp
 
-    def artifacts(self, username, project, build_num, verbose=False):
+    def artifacts(self, username, project, build_num, verbose=False, filters={}):
         """List the artifacts produced by a given build.
 
         Args:
@@ -196,16 +237,17 @@ class CircleAPI(object):
             project (str): the project name
             build_num (int): the build number
             verbose (bool): whether to return filtered info or the full response
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (list) the artifacts produced by the build
         """
-        r_json = self._get('project/{username}/{project}/{build_num}/artifacts'.format(**locals()))
+        r_json = self._filter(self._get('project/{username}/{project}/{build_num}/artifacts'.format(**locals())), filters)
         if verbose:
             return json.dumps(r_json, indent=2)
         return [ar['url'] for ar in r_json]
 
-    def retry_build(self, username, project, build_num, verbose=False):
+    def retry_build(self, username, project, build_num, verbose=False, filters={}):
         """Retry a given build.
 
         Args:
@@ -213,11 +255,12 @@ class CircleAPI(object):
             project (str): the project name
             build_num (int): the build number
             verbose (bool): whether to return filtered info or the full response
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (dict) a summary of the new build
         """
-        r_json = self._post('project/{username}/{project}/{build_num}/retry'.format(**locals()))
+        r_json = self._filter(self._post('project/{username}/{project}/{build_num}/retry'.format(**locals())), filters)
         if verbose:
             return json.dumps(r_json, indent=2)
 
@@ -236,7 +279,7 @@ class CircleAPI(object):
 
         return resp
 
-    def cancel_build(self, username, project, build_num, verbose=False):
+    def cancel_build(self, username, project, build_num, verbose=False, filters={}):
         """Cancel a given build.
 
         Args:
@@ -244,11 +287,12 @@ class CircleAPI(object):
             project (str): the project name
             build_num (int): the build number
             verbose (bool): whether to return filtered info or the full response
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (dict) a summary of the canceled build
         """
-        r_json = self._post("project/{username}/{project}/{build_num}/cancel".format(**locals()))
+        r_json = self._filter(self._post("project/{username}/{project}/{build_num}/cancel".format(**locals())), filters)
         if verbose:
             return json.dumps(r_json, indent=2)
 
@@ -267,7 +311,7 @@ class CircleAPI(object):
 
         return resp
 
-    def ssh_users(self, username, project, build_num, verbose=False):
+    def ssh_users(self, username, project, build_num, verbose=False, filters={}):
         """Add a user to the build's SSH permissions.
 
         Args:
@@ -275,13 +319,15 @@ class CircleAPI(object):
             project (str): the project name
             build_num (int): the build number
             verbose (bool): whether to return filtered info or the full response
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (dict) confirmation of the added user
         """
         raise NotImplementedError(u"This method has not yet been implemented.")
 
-    def new_build(self, username, project, branch="master", data=None, verbose=False):
+    def new_build(self, username, project, branch="master", data=None, verbose=False,
+                  filters={}):
         """Trigger a new build.
 
         Args:
@@ -289,12 +335,13 @@ class CircleAPI(object):
             project (str): the project name
             branch (str): the branch to use for the build
             verbose (bool): whether to return filtered info or the full response
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (dict) a summary of the new build
         """
-        r_json = self._post("project/{username}/{project}/tree/{branch}".format(**locals()),
-                            data=data)
+        r_json = self._filter(self._post("project/{username}/{project}/tree/{branch}".format(**locals()),
+                                         data=data), filters)
         if verbose:
             return json.dumps(r_json, indent=2)
 
@@ -313,67 +360,72 @@ class CircleAPI(object):
 
         return resp
 
-    def create_ssh(self, username, project):
+    def create_ssh(self, username, project, filters={}):
         """Create an SSH key used to access key-based external systems.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (dict) confirmation of the added key
         """
         raise NotImplementedError(u"This method has not yet been implemented.")
 
-    def list_checkout_keys(self, username, project):
+    def list_checkout_keys(self, username, project, filters={}):
         """List checkout keys.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (list) the checkout keys
         """
-        return self._get('project/{username}/{project}/checkout-key'.format(**locals()))
+        return self._filter(self._get('project/{username}/{project}/checkout-key'.format(**locals())), filters)
 
-    def create_checkout_key(self, username, project):
+    def create_checkout_key(self, username, project, filters={}):
         """List checkout keys.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (dict) confirmation of the added key
         """
         raise NotImplementedError(u"This method has not yet been implemented.")
 
-    def checkout_key(self, username, project, fingerprint):
+    def checkout_key(self, username, project, fingerprint, filters={}):
         """Get a checkout key.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
             fingerprint (str): the fingerprint of the checkout key
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (dict) a single checkout key
         """
-        return self._get('project/{username}/{project}/checkout-key/{fingerprint}'.format(**locals()))
+        return self._filter(self._get('project/{username}/{project}/checkout-key/{fingerprint}'.format(**locals())), filters)
 
-    def delete_checkout_key(self, username, project, fingerprint):
+    def delete_checkout_key(self, username, project, fingerprint, filters={}):
         """Delete a checkout key.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
             fingerprint (str): the fingerprint of the checkout key
+            filters (dict): a set of key/value pairs to match
 
         Returns:
             (dict) a single checkout key
         """
-        return self._delete('project/{username}/{project}/checkout-key/{fingerprint}'.format(**locals()))
+        return self._filter(self._delete('project/{username}/{project}/checkout-key/{fingerprint}'.format(**locals())), filters)
 
     def clear_cache(self, username, project, verbose=False):
         """Clear the cache for a project.
@@ -411,13 +463,14 @@ class CircleAPI(object):
         """
         raise NotImplementedError(u"This method has not yet been implemented.")
 
-    def envvar(self, username, project, verbose=False, **envvars):
+    def envvar(self, username, project, verbose=False, filters={}, **envvars):
         """List or add environment variables for a project.
 
         Args:
             username (str): the owner of the project
             project (str): the project name
             verbose (bool): whether to return filtered info or the full response
+            filters (dict): a set of key/value pairs to match
             **envvars (dict): variables to set
 
         Return:
@@ -433,7 +486,7 @@ class CircleAPI(object):
                 if r_json:
                     resp.append(r_json)
         else:
-            r_json = self._get("project/{username}/{project}/envvar".format(**locals()))
+            r_json = self._filter(self._get("project/{username}/{project}/envvar".format(**locals())), filters)
             if r_json:
                 resp.extend(r_json)
 
