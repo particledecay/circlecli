@@ -103,6 +103,24 @@ class CircleAPI(object):
 
         return r.json()
 
+    def _retr_item(self, obj, key):
+        """Retrieve an item from a dict, including sub-keys.
+
+        Args:
+            obj (dict): a dict object
+            key (str): a key to retrieve from `obj`
+
+        Returns:
+            () the item located at `key`
+        """
+        keys = key.split('.')
+        item = obj
+        for k in keys:
+            item = item.get(k)
+            if not item:
+                raise KeyError
+        return item
+
     def _filter_single(self, response, filters):
         """Filter a single response object by matching a provided set of filters.
 
@@ -113,11 +131,12 @@ class CircleAPI(object):
         Returns:
             (dict) the response if it matches all filters
         """
-        resp_keys = response.keys()
         for k, v in filters.iteritems():
-            if k not in resp_keys:
+            try:
+                item = self._retr_item(response, k)
+            except KeyError:  # we know the key doesn't exist
                 return
-            if response[k] != v:
+            if item != v:
                 return
         return response
 
