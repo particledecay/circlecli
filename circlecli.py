@@ -136,7 +136,11 @@ class CircleAPI(object):
                 item = self._retr_item(response, k)
             except KeyError:  # we know the key doesn't exist
                 return
-            if item != v:
+            try:
+                # things like "true" need to be JSON-loaded to match a boolean
+                if item != v and item != json.loads(v):
+                    return
+            except:
                 return
         return response
 
