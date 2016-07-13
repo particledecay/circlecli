@@ -5,7 +5,9 @@ Tests for the CircleCLI API library.
 
 """
 
+import binascii
 import json
+import os
 import unittest
 
 from httmock import with_httmock
@@ -14,21 +16,30 @@ from circlecli import CircleAPI
 import mocks.circlecli
 
 
+# 40-character hexadecimal string
+FAKE_TOKEN = binascii.b2a_hex(os.urandom(20))
+
+
 class TestCircleCLISetup(unittest.TestCase):
 
     """ CircleAPI.init() should check the token is a 40-digit hex string
         and return an error if it is not
     """
     def test_valid_token(self):
-        circlecli = CircleAPI('moo')
+        circlecli = CircleAPI(FAKE_TOKEN)
 
     def test_invalid_token(self):
-        circlecli = CircleAPI('foo')
+        # not long enough
+        self.assertRaises(ValueError, CircleAPI, 'fff')
+
+        # not hex
+        self.assertRaises(ValueError, CircleAPI, 'ququququququququququququququququququququ')
+
 
 class TestCircleCLI(unittest.TestCase):
 
     def setUp(self):
-        self.circlecli = CircleAPI('bar')
+        self.circlecli = CircleAPI(FAKE_TOKEN)
 
     """ CircleAPI.me()
         test results as a dict

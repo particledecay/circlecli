@@ -5,7 +5,9 @@ Tests for the CircleCLI API library.
 
 """
 
+import binascii
 import json
+import os
 import unittest
 
 from httmock import with_httmock
@@ -14,10 +16,14 @@ from circlecli import CircleAPI
 import mocks.circlecli
 
 
+# 40-character hexadecimal string
+FAKE_TOKEN = binascii.b2a_hex(os.urandom(20))
+
+
 class TestCircleCLIBuilds(unittest.TestCase):
 
     def setUp(self):
-        self.circlecli = CircleAPI('bar')
+        self.circlecli = CircleAPI(FAKE_TOKEN)
 
     """ CircleAPI.builds()
         test results as dict
