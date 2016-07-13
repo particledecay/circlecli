@@ -1,4 +1,4 @@
-[ {
+[{
   "compare" : "https://github.com/therealbarack/circlecli/compare/3012e5adc94c...b69cbfc3fb85",
   "previous_successful_build" : null,
   "build_parameters" : null,
@@ -76,4 +76,79 @@
   "queued_at" : "2016-07-11T13:03:37.716Z",
   "canceled" : false,
   "author_email" : "therealbarack@users.noreply.github.com"
-} ]
+},
+{
+  "username": "therealjoebiden",
+  "compare": null,
+  "vcs_url": "https://github.com/therealjoebiden/homeland_security",
+  "ssh_disabled": false,
+  "oss": true,
+  "build_url": "https://circleci.com/gh/therealjoebiden/homeland_security/1",
+  "committer_date": "2016-07-10T14:36:42Z",
+  "author_name": "Joe Biden",
+  "build_num": 1,
+  "canceled": false,
+  "reponame": "homeland_security",
+  "retry_of": null,
+  "vcs_revision": "57b1f5afd9dfc7e8bb9cf9e68890097958d5d793",
+  "vcs_tag": null,
+  "previous": null,
+  "build_time_millis": 45753,
+  "committer_email": "noreply@github.com",
+  "infrastructure_fail": false,
+  "author_email": "eatatjoes@whitehouse.gov",
+  "circle_yml": {
+    "string": "general:\n  artifacts:\n    - cover\n\ndependencies:\n  override:\n    - pip install -r requirements_dev.txt\n\ntest:\n  override:\n    - nosetests --cover-branches --with-coverage --cover-erase --cover-package=circlecli --cover-html --with-xunit\n  post:\n    - mkdir $CIRCLE_TEST_REPORTS/nosetests && cp nosetests.xml $CIRCLE_TEST_REPORTS/nosetests\n"
+  },
+  "no_dependency_cache": false,
+  "is_first_green_build": true,
+  "all_commit_details_truncated": false,
+  "failed": null,
+  "previous_successful_build": null,
+  "stop_time": "2016-07-10T14:37:53.275Z",
+  "branch": "master",
+  "build_parameters": null,
+  "queued_at": "2016-07-10T14:37:07.486Z",
+  "has_artifacts": true,
+  "body": "Circleci testing",
+  "canceler": null,
+  "lifecycle": "finished",
+  "start_time": "2016-07-10T14:37:07.522Z",
+  "timedout": false,
+  "subject": "forgot to remove the patriot act",
+  "ssh_users": [],
+  "usage_queued_at": "2016-07-10T14:37:26.736Z",
+  "user": {
+    "is_user": false,
+    "login": "none"
+  },
+  "dont_build": null,
+  "why": "first-build",
+  "vcs_type": "github",
+  "retries": null,
+  "node": null,
+  "outcome": "success",
+  "fail_reason": null,
+  "all_commit_details": [
+    {
+      "body": "Circleci testing",
+      "committer_email": "noreply@github.com",
+      "commit_url": "https://github.com/therealjoebiden/homeland_security/commit/57b1f5afd9dfc7e8bb9cf9e68890097958d5d793",
+      "author_email": "eatatjoes@whitehouse.gov",
+      "author_login": "therealjoebiden",
+      "committer_date": "2016-07-10T14:36:42Z",
+      "author_name": "Joe Biden",
+      "committer_login": "web-flow",
+      "commit": "57b1f5afd9dfc7e8bb9cf9e68890097958d5d793",
+      "author_date": "2016-07-10T14:36:42Z",
+      "committer_name": "GitHub",
+      "subject": "forgot to remove the patriot act"
+    }
+  ],
+  "messages": [],
+  "job_name": null,
+  "status": "success",
+  "parallel": 1,
+  "author_date": "2016-07-10T14:36:42Z",
+  "committer_name": "GitHub"
+}]
