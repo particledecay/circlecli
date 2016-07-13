@@ -17,8 +17,25 @@ class CircleAPI(object):
         Args:
             token (str): the CircleCI API token (obtained at https://circleci.com/account/api)
         """
-        self._token = token
+        self._token = self._validate_token(token)
         self._base_url = "https://circleci.com/api/v1"
+
+    def _validate_token(self, token):
+        """Ensure the provided token is a valid CircleCI API token.
+
+        Args:
+            token (str): the CircleCI API token
+
+        Returns:
+            (str) a valid token
+        """
+        if len(token) != 40:
+            raise ValueError(u"Invalid API token: {}".format(token))
+        try:
+            int(token, 16)
+        except ValueError:
+            raise ValueError(u"Invalid API token: {}".format(token))
+        return token
 
     def _build_url(self, endpoint, params={}):
         """Return the full URL for the desired endpoint.
