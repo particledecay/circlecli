@@ -17,6 +17,17 @@ See the [Examples](#examples) section for common types of usage.
 pip install circlecli
 ```
 
+## Configuration
+CircleCLI requires an API token from your CircleCI [Account Settings](https://circleci.com/account/api) page.
+You may set this token as an environment variable named `CIRCLE_TOKEN` (good for scripting), or CircleCLI will interactively ask you for this token on first run if no configuration file is present.
+If you let CircleCLI prompt you for info, then it will create a configuration file named `.circlecli.ini` in your user's home directory that looks like this:
+```
+[circlecli]
+token = XXXXX
+default_username = XXXXX
+```
+You can always edit your own values in this configuration file.
+
 ## Usage
 ```
 circlecli [--help] [--project PROJECT] [--username USERNAME]
@@ -70,6 +81,12 @@ Parallelism: 1
 Username: TheRealBarack
 Admin: False
 Projects: https://github.com/whitehouse/constitution, https://github.com/whitehouse/education, https://github.com/whitehouse/us_web_design_standards
+```
+#### Print detected configuration and exit
+```bash
+me@foobox:~$ circlecli config
+token = THISISNOTAREALTOKEN
+default_username = 
 ```
 #### List projects you follow
 ```bash

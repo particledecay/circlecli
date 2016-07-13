@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import ConfigParser
+from os import environ as env
 
 # for reusing the module docstring
 docstring = 'Execute CircleCI REST API commands from the CLI.'
 __doc__ = docstring
 
 SECTION_NAME = 'circlecli'
+ENV_TOKEN_NAME = 'CIRCLE_TOKEN'
 
 
 def read_config(config_file):
@@ -26,7 +28,7 @@ def read_config(config_file):
     try:
         [config.setdefault(k, v) for k, v in cp.items(SECTION_NAME)]
     except ConfigParser.NoSectionError:
-        print("No previous configuration found.")
+        pass
 
     return config
 
@@ -34,6 +36,11 @@ def read_config(config_file):
 def init_config(config_path):
     """Initialize configuration or create new one."""
     config = read_config(config_path)
+
+    # environment variable overrides
+    if env.get(ENV_TOKEN_NAME):
+        config['token'] = env[ENV_TOKEN_NAME]
+
     if not config.get('token'):
         # read new token
         print("Enter your CircleCI API token at the prompt (https://circleci.com/account/api).")
@@ -81,7 +88,7 @@ if __name__ == "__main__":
     parser.add_argument('--project', '-p', dest='project', action='store',
                         help="The target project name")
     parser.add_argument('--username', '-u', dest='username', action='store',
-                        default=config['default_username'],
+                        default=config.get('default_username'),
                         help="The username of the project/repo owner")
     parser.add_argument('--build-num', '-b', dest='build_num', action='store',
                         type=int, help="The target build number")
