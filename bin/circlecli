@@ -170,13 +170,13 @@ available actions:
                 print("\t{}".format(ex))
                 print("")
 
+    # instantiate the CircleAPI class
+    circle = CircleAPI(config['token'])
+
     if args.config or args.action == 'config':
         for k, v in config.iteritems():
             print("{} = {}".format(k, v))
         sys.exit(0)
-
-    # instantiate the CircleAPI class
-    circle = CircleAPI(config['token'])
 
     # help action
     if args.opt_help or args.action == 'help':
