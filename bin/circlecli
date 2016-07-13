@@ -202,6 +202,7 @@ available actions:
 
             ex_args = OrderedDict()
             ex_args['List projects followed by your account'] = "circlecli projects"
+            ex_args['List only projects that build on OSX'] = "circlecli projects -f feature_flags.osx=true"
             print_action_help(circle.projects.__doc__.split('\n')[0], help_args, ex_args)
         else:
             res = circle.projects(args.verbose, filters=filters)
@@ -223,7 +224,7 @@ available actions:
             ex_args['List builds for the account'] = "circlecli builds"
             ex_args['List only successful builds'] = "circlecli builds -f status=success"
             ex_args['List builds for a project'] = "circlecli builds -u foo_user -p foo_project"
-            ex_args['List only successful builds for master branch'] = "circlecli builds -u foo_user -p foo_project -f branch=master -f status=success"
+            ex_args['List only successful builds for master branch (w/ default user)'] = "circlecli builds -p foo_project -f branch=master -f status=success"
             ex_args["List a specific build's details"] = "circlecli builds -u foo_user -p foo_project -b 14"
             print_action_help(circle.builds.__doc__.split('\n')[0], help_args, ex_args)
         else:

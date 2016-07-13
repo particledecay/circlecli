@@ -78,6 +78,11 @@ whitehouse/constitution
 whitehouse/education
 whitehouse/us_web_design_standards
 ```
+#### Filter only projects that build on OSX
+```bash
+me@foobox:~$ circlecli projects -f feature_flags.osx=true
+whitehouse/education
+```
 #### List builds for the account
 ```bash
 me@foobox:~$ circlecli builds
@@ -97,6 +102,17 @@ Queued : Fri, Jul 08, 2016 08:42PM EDT
 Trigger: github
 URL    : https://circleci.com/gh/whitehouse/us_web_design_standards/12
 Result : success
+```
+#### Filter builds by a specific user
+```
+me@foobox.com:~$ circlecli builds -f user.login=TheRealBarack
+Build# : 11
+Author : Barack Obama <president@whitehouse.gov>
+Branch : master
+Queued : Fri, Jul 08, 2016 08:09PM EDT
+Trigger: github
+URL    : https://circleci.com/gh/whitehouse/us_web_design_standards/11
+Result : canceled
 ```
 #### View a specific build's details
 ```bash
