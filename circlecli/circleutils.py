@@ -95,7 +95,7 @@ def validate_circle_yml(filepath):
                         raise InvalidSectionError(u"'{}.{}' subsection must be a list".format(subsection))
                 elif subsection in languages:
                     if not isinstance(item, dict) or len(item.keys()) != 1 or not item.get('version'):
-                        raise InvalidSectionError(u"'{}.{}' subsection only supports 'version'".format(subsection))
+                        raise InvalidSectionError(u"'{}.{}' subsection only supports 'version'".format(section, subsection))
         elif section == 'checkout':
             allowed = {'post'}
             try:
