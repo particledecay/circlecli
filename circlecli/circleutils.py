@@ -79,7 +79,7 @@ def validate_circle_yml(filepath):
             invalid_sections = _errant_items(subsections, allowed)
             if len(invalid_sections) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             # check each subsection
             for subsection in subsections:
@@ -107,7 +107,7 @@ def validate_circle_yml(filepath):
             invalid_sections = _errant_items(subsections, allowed)
             if len(invalid_sections) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             # check the only subsection
             item = circle_yml[section]['post']
@@ -126,7 +126,7 @@ def validate_circle_yml(filepath):
             invalid_sections = _errant_items(subsections, allowed)
             if len(invalid_sections) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             # check each subsection
             for subsection in subsections:
@@ -144,7 +144,7 @@ def validate_circle_yml(filepath):
                     invalid_subitems = _errant_items(subitems, allowed_subitems)
                     if len(invalid_subitems) > 0:
                         # we have an invalid section
-                        raise InvalidSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, subsection, ", ".join(invalid_subitems)))
+                        raise UnrecognizedSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, subsection, ", ".join(invalid_subitems)))
 
                     subsubitem = circle_yml[section][subsection]['without']
                     if not isinstance(subsubitem, list):
@@ -160,7 +160,7 @@ def validate_circle_yml(filepath):
             invalid_sections = _errant_items(subsections, allowed)
             if len(invalid_sections) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             # check each subsection
             for subsection in subsections:
@@ -180,7 +180,7 @@ def validate_circle_yml(filepath):
             invalid_sections = _errant_items(subsections, allowed)
             if len(invalid_sections) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             # check each subsection
             for subsection in subsections:
@@ -206,7 +206,7 @@ def validate_circle_yml(filepath):
                 invalid_subitems = _errant_items(subitems, allowed)
                 if len(invalid_subitems) > 0:
                     # we have an invalid subitem
-                    raise InvalidSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, subsection, ", ".join(invalid_subitems)))
+                    raise UnrecognizedSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, subsection, ", ".join(invalid_subitems)))
 
                 if 'branch' not in subitems:
                     raise InvalidSectionError(u"'branch' missing from '{}.{}'".format(section, subsection))
@@ -233,7 +233,7 @@ def validate_circle_yml(filepath):
             invalid_sections = _errant_items(subsections, allowed)
             if len(invalid_sections) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             webhooks = circle_yml[section]['webhooks']
             if not isinstance(webhooks, list):
@@ -252,7 +252,7 @@ def validate_circle_yml(filepath):
             invalid_sections = _errant_items(subsections, allowed)
             if len(invalid_sections) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             for subsection in subsections:
                 if subsection == 'artifacts':
@@ -270,7 +270,7 @@ def validate_circle_yml(filepath):
                     invalid_subitems = _errant_items(subitems, allowed_subitems)
                     if len(invalid_subitems) > 0:
                         # we have an invalid subitem
-                        raise InvalidSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, ", ".join(invalid_sections)))
+                        raise UnrecognizedSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, ", ".join(invalid_sections)))
 
                     for subitem in subitems:
                         item = circle_yml[section][subsection][subitem]
@@ -291,7 +291,7 @@ def validate_circle_yml(filepath):
             invalid_sections = _errant_items(subsections, allowed)
             if len(invalid_sections) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             allowed_subitems = {'branches'}
             try:
@@ -303,7 +303,7 @@ def validate_circle_yml(filepath):
             invalid_subitems = _errant_items(subitems, allowed_subitems)
             if len(invalid_subitems) > 0:
                 # we have an invalid section
-                raise InvalidSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, 'notify', ", ".join(invalid_subitems)))
+                raise UnrecognizedSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, 'notify', ", ".join(invalid_subitems)))
 
             for subitem in subitems:
                 allowed_subsubitems = {'ignore', 'only'}
@@ -316,7 +316,7 @@ def validate_circle_yml(filepath):
                 invalid_subsubitems = _errant_items(subsubitems, allowed_subsubitems)
                 if len(invalid_subsubitems) > 0:
                     # we have an invalid subsubitem
-                    raise InvalidSectionError(u"Subitems not allowed in '{}.{}.{}': {}".format(section, 'notify', subitem, ", ".join(invalid_subsubitems)))
+                    raise UnrecognizedSectionError(u"Subitems not allowed in '{}.{}.{}': {}".format(section, 'notify', subitem, ", ".join(invalid_subsubitems)))
 
                 for subsubitem in subsubitems:
                     item = circle_yml[section]['notify'][subitem][subsubitem]
