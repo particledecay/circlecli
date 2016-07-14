@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# A hook script to ensure that circle.yml files are valid.
+#
+# To enable this hook, move to .git/hooks/pre-commit
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+CIRCLECLI_BIN=$(which circlecli)
+
+# verify that circlecli is installed and available
+if [ -z "$CIRCLECLI_BIN" ]; then
+  echo "CircleCLI not installed. Install with \`pip install circlecli\`."
+  exit 1
+fi
+
+# for validating a single file
+function validate_config {
+  filepath=$1
+  if [ ! -f "$filepath" ]; then
+    return 1
+  fi
+
+  output=$( $CIRCLECLI_BIN check $filepath )
+  [ ! -z "$output" ] && printf "${filepath}:\n    ${output}\n" && return 2
+
+  return 0
+}
+
+# uncomment the following line and comment the next one to verify ALL
+# circle.yml files within the project
+# files_to_check=($(find $PROJECT_ROOT -name 'circle.yml'))
+files_to_check=("${PROJECT_ROOT}/circle.yml")
+
+all_valid=1
+for f in ${files_to_check[*]}; do
+  validate_config $f
+  exit_status=$?
+  if [ $exit_status -eq 1 ]; then
+    printf "${f} does not exist."  # this should never happen
+    exit 1
+  fi
+  if [ $exit_status -ne 0 ]; then
+    all_valid=0
+  fi
+done
+
+# a circle.yml file was invalid
+[ $all_valid -eq 0 ] && exit 1
+# all circle.yml files are valid
+exit 0
