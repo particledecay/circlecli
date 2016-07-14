@@ -1,8 +1,11 @@
 import os
 import unittest
 
+import mocks.circlecli
+from httmock import with_httmock
+
 from circlecli.circleutils import InvalidSectionError, UnrecognizedSectionError, \
-    validate_circle_yml
+    circle_status, validate_circle_yml
 
 
 class TestValidConfigMachine(unittest.TestCase):
@@ -850,3 +853,26 @@ experimental:
     def test_invalid_config(self):
         """Should detect an invalid config."""
         self.assertRaises(UnrecognizedSectionError, validate_circle_yml, self.circle.name)
+
+
+class TestCircleCIStatus(unittest.TestCase):
+    """Test the ability to parse CircleCI page status."""
+
+    @with_httmock(mocks.circlecli.resource_get)
+    def test_circleci_status_scrape(self):
+        """Should scape the CircleCI status page and print status."""
+        results = circle_status(verbose=False)
+        print results
+
+        self.assertEqual(results[0][1], 'All Systems Operational')
+
+    @with_httmock(mocks.circlecli.resource_get)
+    def test_circleci_status_scrape_verbose(self):
+        """Should scape the CircleCI status page and print status."""
+        results = circle_status(verbose=True)
+        print results
+
+        self.assertEqual(len(results), 10)
+        self.assertEqual(results[0][1], 'All Systems Operational')
+        self.assertEqual(results[1][0], 'CircleCI')
+        self.assertEqual(results[1][1], 'Operational')

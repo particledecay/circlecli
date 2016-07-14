@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Utils for CircleCI."""
 import os.path as op
+import requests
 import yaml
+from bs4 import BeautifulSoup
 
 
 class InvalidNameError(Exception):
@@ -332,3 +334,46 @@ def validate_circle_yml(filepath):
                     if not isinstance(item, list):
                         raise InvalidSectionError(u"'{}.{}.{}.{}' subitem must be a list".format(section, 'notify', subitem, subsubitem))
     return True
+
+
+# status values for CircleCI status page (subject to change)
+CIRCLE_GREEN_COMPONENT = 'Operational'
+CIRCLE_GREEN_PAGE = 'All Systems Operational'
+
+
+def circle_status(verbose=False):
+    """Check CircleCI site status (http://status.circleci.com)."""
+    status_page = requests.get('http://status.circleci.com')
+    soup = BeautifulSoup(status_page.content, "html.parser")
+
+    response = []
+    # get overall page status
+    page_component = soup.select('.page-status > .status')
+    page_component = page_component[0] if len(page_component) > 0 else None
+    if not page_component:
+        return response
+
+    page_status = page_component.find(text=True).strip()
+    response.append((None, page_status))
+
+    # get component status
+    all_components = []
+    components = soup.select('.components-section .component-inner-container')
+    for component in components:
+        name = component.select('.name')
+        name = name[0].find(text=True).strip() if len(name) > 0 else "Unknown"
+
+        status = component.select('.component-status')
+        status = status[0].find(text=True).strip() if len(status) > 0 else "Unknown"
+
+        all_components.append((name, status))
+
+    if not verbose:
+        if response[0][1] != CIRCLE_GREEN_PAGE:
+            bad_components = [c for c in all_components if c[1] != CIRCLE_GREEN_COMPONENT]
+            return bad_components
+        else:
+            return response
+
+    response.extend(all_components)
+    return response

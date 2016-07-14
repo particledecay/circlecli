@@ -71,7 +71,7 @@ if __name__ == "__main__":
     from collections import OrderedDict
     from os import path as op
 
-    from circlecli import CircleAPI, validate_circle_yml
+    from circlecli import CircleAPI, circle_status, validate_circle_yml
 
     # read the config
     config = init_config(op.join(op.expanduser("~"), '.circlecli.ini'))
@@ -120,6 +120,7 @@ available actions:
   clear-cache\t{}
   env\t\t{}
   check\t\t{}
+  status\t{}
   <cmd> help\tDisplay help text for a particular action
             """.format(
                 circle.me.__doc__.split('\n')[0],
@@ -130,7 +131,8 @@ available actions:
                 circle.cancel_build.__doc__.split('\n')[0],
                 circle.clear_cache.__doc__.split('\n')[0],
                 circle.envvar.__doc__.split('\n')[0],
-                validate_circle_yml.__doc__.split('\n')[0]
+                validate_circle_yml.__doc__.split('\n')[0],
+                circle_status.__doc__.split('\n')[0]
             )
         )
         sys.exit(0)
@@ -209,6 +211,31 @@ available actions:
                 if not args.quiet:
                     print(e.message)
                 sys.exit(1)
+    elif args.action == 'status':
+        if next_action('status', 'help'):
+            help_args = OrderedDict()
+            help_args['  --verbose|-v'] = "\t(optional) Print status of all components"
+            help_args['  --quiet|-q'] = "\t\t(optional) Suppress output"
+
+            ex_args = OrderedDict()
+            ex_args['Check status of CircleCI components'] = 'circlecli status'
+            print_action_help(circle_status.__doc__.split('\n')[0], help_args, ex_args)
+        else:
+            try:
+                res = circle_status(args.verbose)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(10)
+
+            # don't check for args.verbose, since response type doesn't change
+            for name, status in res:
+                if name is None:  # overall page status
+                    print(status)
+                    if len(res) > 1:  # we have more to print
+                        print("")
+                else:
+                    print("{0:<30}: {1:<20}".format(name, status))
     elif args.action == 'me':
         if next_action('me', 'help'):
             help_args = OrderedDict()

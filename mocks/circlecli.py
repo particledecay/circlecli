@@ -47,6 +47,7 @@ class Resource:
 @urlmatch(netloc=NETLOC, method=GET)
 def resource_get(url, request):
     file_path = 'mocks/get/' + url.netloc + url.path
+    file_path = file_path.rstrip('/')  # in case of blank url.path
     try:
         content = Resource(file_path).get()
     except EnvironmentError:
@@ -58,6 +59,7 @@ def resource_get(url, request):
 @urlmatch(netloc=NETLOC, method=DELETE)
 def resource_delete(url, request):
     file_path = 'mocks/delete/' + url.netloc + url.path
+    file_path = file_path.rstrip('/')  # in case of blank url.path
     try:
         content = Resource(file_path).delete()
     except EnvironmentError:
