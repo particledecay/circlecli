@@ -71,7 +71,7 @@ if __name__ == "__main__":
     from collections import OrderedDict
     from os import path as op
 
-    from circlecli import CircleAPI
+    from circlecli import CircleAPI, validate_circle_yml
 
     # read the config
     config = init_config(op.join(op.expanduser("~"), '.circlecli.ini'))
@@ -94,6 +94,8 @@ if __name__ == "__main__":
                         type=int, help="The target build number")
     parser.add_argument('--config', '-c', dest='config', action='store_true',
                         default=False, help="Only print saved configuration values")
+    parser.add_argument('--quiet', '-q', dest='quiet', action='store_true',
+                        default=False, help="Suppress output (only for certain actions)")
     parser.add_argument('--set', '-s', dest='envvars', action='append',
                         default=[], help="Set a variable (used with 'env' action)")
     parser.add_argument('--filter', '-f', dest='filters', action='append',
@@ -117,6 +119,7 @@ available actions:
   cancel\t{}
   clear-cache\t{}
   env\t\t{}
+  check\t\t{}
   <cmd> help\tDisplay help text for a particular action
             """.format(
                 circle.me.__doc__.split('\n')[0],
@@ -126,7 +129,8 @@ available actions:
                 circle.retry_build.__doc__.split('\n')[0],
                 circle.cancel_build.__doc__.split('\n')[0],
                 circle.clear_cache.__doc__.split('\n')[0],
-                circle.envvar.__doc__.split('\n')[0]
+                circle.envvar.__doc__.split('\n')[0],
+                validate_circle_yml.__doc__('\n')[0]
             )
         )
         sys.exit(0)
@@ -143,13 +147,15 @@ available actions:
     # set the filters
     filters = build_filters(args.filters)
 
-    def is_action_help(action):
-        """Check if the next arg is a help arg."""
-        idx = sys.argv.index(action)
+    def next_action(arg, next_arg=None):
+        """Check if the next arg matches a given action."""
+        idx = sys.argv.index(arg)
         next_idx = idx + 1
         if len(sys.argv) < (next_idx + 1):
             return False
-        return sys.argv[next_idx] == 'help'
+        if next_arg is None:
+            return sys.argv[next_idx]  # just return the detected next arg
+        return next_arg if sys.argv[next_idx] == next_arg else False
 
     def print_action_help(summary, kwargs={}, examples={}):
         """Print a help message for a particular action."""
@@ -186,8 +192,25 @@ available actions:
     if not args.action:
         parser.error("you must specify an action")
 
-    if args.action == 'me':
-        if is_action_help('me'):
+    if args.action == 'check':
+        filepath = next_action('check')
+        if not filepath or filepath == 'help':
+            help_args = OrderedDict()
+            help_args['  <file>'] = "\tFilepath to a circle.yml file to validate"
+            help_args['  --quiet|-q'] = "\t(optional) Suppress output"
+
+            ex_args = OrderedDict()
+            ex_args['Ensure a circle.yml file is valid'] = "circlecli check /home/foo/projects/bar/circle.yml"
+            print_action_help(validate_circle_yml.__doc__.split('\n')[0], help_args, ex_args)
+        else:
+            try:
+                validate_circle_yml(filepath)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(1)
+    elif args.action == 'me':
+        if next_action('me', 'help'):
             help_args = OrderedDict()
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
 
@@ -202,7 +225,7 @@ available actions:
             else:
                 print(res)
     elif args.action == 'projects':
-        if is_action_help('projects'):
+        if next_action('projects', 'help'):
             help_args = OrderedDict()
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
             help_args['  --filter|-f KEY=VALUE'] = "\t(optional) Filter by key/value pair (can include multiple)"
@@ -219,7 +242,7 @@ available actions:
             else:
                 print(res)
     elif args.action == 'builds':
-        if is_action_help('builds'):
+        if next_action('builds', 'help'):
             help_args = OrderedDict()
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
@@ -248,7 +271,7 @@ available actions:
             else:
                 print(res)
     elif args.action == 'artifacts':
-        if is_action_help('artifacts'):
+        if next_action('artifacts', 'help'):
             help_args = OrderedDict()
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
@@ -273,7 +296,7 @@ available actions:
             else:
                 print(res)
     elif args.action == 'retry':
-        if is_action_help('retry'):
+        if next_action('retry', 'help'):
             help_args = OrderedDict()
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
@@ -298,7 +321,7 @@ available actions:
             else:
                 print(res)
     elif args.action == 'cancel':
-        if is_action_help('cancel'):
+        if next_action('cancel', 'help'):
             help_args = OrderedDict()
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
@@ -323,7 +346,7 @@ available actions:
             else:
                 print(res)
     elif args.action == 'clear-cache':
-        if is_action_help('clear-cache'):
+        if next_action('clear-cache', 'help'):
             help_args = OrderedDict()
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\t(optional) The project's cache to clear"
@@ -343,7 +366,7 @@ available actions:
             else:
                 print(res)
     elif args.action == 'env':
-        if is_action_help('env'):
+        if next_action('env', 'help'):
             help_args = OrderedDict()
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\tThe project to list or set environment variables"
