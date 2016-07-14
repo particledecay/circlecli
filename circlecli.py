@@ -5,8 +5,14 @@ import requests
 import yaml
 from collections import OrderedDict
 from dateutil import parser as dp, tz
+from os import path as op
 from urllib import urlencode
 from urlparse import ParseResult, urlparse, urlunparse
+
+
+class InvalidNameError(Exception):
+    def __init__(self, message, *args, **kwargs):
+        super(InvalidNameError, self).__init__(message, *args, **kwargs)
 
 
 class UnrecognizedSectionError(Exception):
@@ -44,8 +50,12 @@ def validate_circle_yml(filepath):
         filepath (str): path to the circle.yml file
 
     Returns:
-        (tuple) (True, None) if a valid circle.yml, (False, reason) otherwise
+        (bool) True if a valid circle.yml
     """
+    # obviously the file must be named 'circle.yml'
+    if op.basename(filepath) != 'circle.yml':
+        raise InvalidNameError(u"Filename must be 'circle.yml'")
+
     allowed_sections = {'checkout', 'database', 'dependencies', 'deployment',
                         'experimental', 'general', 'machine', 'test'}
     fd = open(filepath, 'r')  # let it raise an IOError if no file exists
