@@ -130,7 +130,7 @@ available actions:
                 circle.cancel_build.__doc__.split('\n')[0],
                 circle.clear_cache.__doc__.split('\n')[0],
                 circle.envvar.__doc__.split('\n')[0],
-                validate_circle_yml.__doc__('\n')[0]
+                validate_circle_yml.__doc__.split('\n')[0]
             )
         )
         sys.exit(0)
