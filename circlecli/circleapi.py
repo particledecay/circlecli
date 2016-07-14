@@ -133,9 +133,9 @@ class CircleAPI(object):
         keys = key.split('.')
         item = obj
         for k in keys:
-            item = item.get(k)
-            if not item:
+            if k not in item:
                 raise KeyError
+            item = item[k]
         return item
 
     def _filter_single(self, response, filters):
