@@ -38,7 +38,7 @@ def _errant_items(items, allowed_items):
 
 
 def validate_circle_yml(filepath):
-    """Ensure a valid circle.yml according to CircleCI docs.
+    """Ensure a circle.yml file is valid according to CircleCI docs.
 
     Args:
         filepath (str): path to the circle.yml file
