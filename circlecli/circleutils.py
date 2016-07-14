@@ -188,11 +188,18 @@ def validate_circle_yml(filepath):
                 if not isinstance(item, list):
                     raise InvalidSectionError(u"'{}' section must be a list".format(subsection))
         elif section == 'deployment':
-            # all subsection names are allowed
+            # all subsection names are allowed except pre, override, post
+            disallowed = {'pre', 'override', 'post'}
             try:
                 subsections = circle_yml[section].keys()
             except AttributeError:
                 raise InvalidSectionError(u"Invalid subsection format in '{}'".format(section))
+
+            # check for valid subsections
+            invalid_sections = disallowed.intersection(set(subsections))
+            if len(invalid_sections) > 0:
+                # we have an invalid section
+                raise UnrecognizedSectionError(u"Subsections not allowed in '{}': {}".format(section, ", ".join(invalid_sections)))
 
             # check each subsection
             for subsection in subsections:
@@ -208,9 +215,11 @@ def validate_circle_yml(filepath):
                     # we have an invalid subitem
                     raise UnrecognizedSectionError(u"Subitems not allowed in '{}.{}': {}".format(section, subsection, ", ".join(invalid_subitems)))
 
-                if 'branch' not in subitems:
-                    raise InvalidSectionError(u"'branch' missing from '{}.{}'".format(section, subsection))
-                branch = circle_yml[section][subsection]['branch']
+                required = {'branch', 'tag'}
+                found = required.intersection(set(subitems))
+                if len(found) == 0:
+                    raise InvalidSectionError(u"'branch' or 'tag' required in '{}.{}'".format(section, subsection))
+                branch = circle_yml[section][subsection][found.pop()]
                 if not isinstance(branch, basestring) and not isinstance(branch, list):
                     raise InvalidSectionError(u"'branch' value not a list or string in '{}.{}'".format(section, subsection))
                 commands = circle_yml[section][subsection].get('commands')
