@@ -95,7 +95,7 @@ if __name__ == "__main__":
     parser.add_argument('--config', '-c', dest='config', action='store_true',
                         default=False, help="Only print saved configuration values")
     parser.add_argument('--quiet', '-q', dest='quiet', action='store_true',
-                        default=False, help="Suppress output (only for certain actions)")
+                        default=False, help="Suppress output")
     parser.add_argument('--set', '-s', dest='envvars', action='append',
                         default=[], help="Set a variable (used with 'env' action)")
     parser.add_argument('--filter', '-f', dest='filters', action='append',
@@ -213,12 +213,18 @@ available actions:
         if next_action('me', 'help'):
             help_args = OrderedDict()
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
+            help_args['  --quiet|-q'] = "\t\t(optional) Suppress output"
 
             ex_args = OrderedDict()
             ex_args['Print information about your account'] = "circlecli me"
             print_action_help(circle.me.__doc__.split('\n')[0], help_args, ex_args)
         else:
-            res = circle.me(args.verbose)
+            try:
+                res = circle.me(args.verbose)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(2)
             if not args.verbose:
                 for k, v in res.iteritems():
                     print("{}: {}".format(k, v))
@@ -228,14 +234,20 @@ available actions:
         if next_action('projects', 'help'):
             help_args = OrderedDict()
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
-            help_args['  --filter|-f KEY=VALUE'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --filter|-f KEY=VAL'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --quiet|-q'] = "\t\t(optional) Suppress output"
 
             ex_args = OrderedDict()
             ex_args['List projects followed by your account'] = "circlecli projects"
             ex_args['List only projects that build on OSX'] = "circlecli projects -f feature_flags.osx=true"
             print_action_help(circle.projects.__doc__.split('\n')[0], help_args, ex_args)
         else:
-            res = circle.projects(args.verbose, filters=filters)
+            try:
+                res = circle.projects(args.verbose, filters=filters)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(3)
             if not args.verbose:
                 for k in res:
                     print(k)
@@ -248,7 +260,7 @@ available actions:
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
             help_args['  --build_num|-b <int>'] = "(optional) A build number to get specific build details"
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
-            help_args['  --filter|-f KEY=VALUE'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --filter|-f KEY=VAL'] = "\t(optional) Filter by key/value pair (can include multiple)"
 
             ex_args = OrderedDict()
             ex_args['List builds for the account'] = "circlecli builds"
@@ -260,9 +272,14 @@ available actions:
         else:
             if args.project and not args.username:
                 parser.error("username (-u) is required")
-            res = circle.builds(username=args.username, project=args.project,
-                                build_num=args.build_num, verbose=args.verbose,
-                                filters=filters)
+            try:
+                res = circle.builds(username=args.username, project=args.project,
+                                    build_num=args.build_num, verbose=args.verbose,
+                                    filters=filters)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(4)
             if not args.verbose:
                 for build in res:
                     for k, v in build.iteritems():
@@ -277,7 +294,8 @@ available actions:
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
             help_args['  --build_num|-b <int>'] = "(optional) A build number to get artifacts"
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
-            help_args['  --filter|-f KEY=VALUE'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --filter|-f KEY=VAL'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --quiet|-q'] = "\t\t(optional) Suppress output"
 
             ex_args = OrderedDict()
             ex_args['List artifacts for a build'] = "circlecli artifacts -u foo_user -p foo_project -b 14"
@@ -287,9 +305,14 @@ available actions:
                 parser.error("username (-u) is required")
             if not args.build_num:
                 parser.error("build-num (-b) is required")
-            res = circle.artifacts(username=args.username, project=args.project,
-                                   build_num=args.build_num, verbose=args.verbose,
-                                   filters=filters)
+            try:
+                res = circle.artifacts(username=args.username, project=args.project,
+                                       build_num=args.build_num, verbose=args.verbose,
+                                       filters=filters)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(5)
             if not args.verbose:
                 for k in res:
                     print(k)
@@ -302,7 +325,8 @@ available actions:
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
             help_args['  --build_num|-b <int>'] = "(optional) A build number to retry"
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
-            help_args['  --filter|-f KEY=VALUE'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --filter|-f KEY=VAL'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --quiet|-q'] = "\t\t(optional) Suppress output"
 
             ex_args = OrderedDict()
             ex_args['Retry a build'] = "circlecli retry -u foo_user -p foo_project -b 14"
@@ -312,9 +336,14 @@ available actions:
                 parser.error("username (-u) is required")
             if not args.build_num:
                 parser.error("build-num (-b) is required")
-            res = circle.retry_build(username=args.username, project=args.project,
-                                     build_num=args.build_num, verbose=args.verbose,
-                                     filters=filters)
+            try:
+                res = circle.retry_build(username=args.username, project=args.project,
+                                         build_num=args.build_num, verbose=args.verbose,
+                                         filters=filters)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(6)
             if not args.verbose:
                 for k, v in res.iteritems():
                     print("{}: {}".format(k, v))
@@ -327,7 +356,8 @@ available actions:
             help_args['  --project|-p <str>'] = "\t(optional) A project to get build info"
             help_args['  --build_num|-b <int>'] = "(optional) A build number to cancel"
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
-            help_args['  --filter|-f KEY=VALUE'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --filter|-f KEY=VAL'] = "\t(optional) Filter by key/value pair (can include multiple)"
+            help_args['  --quiet|-q'] = "\t\t(optional) Suppress output"
 
             ex_args = OrderedDict()
             ex_args['Cancel a build'] = "circlecli cancel -u foo_user -p foo_project -b 14"
@@ -337,9 +367,14 @@ available actions:
                 parser.error("username (-u) is required")
             if not args.build_num:
                 parser.error("build-num (-b) is required")
-            res = circle.cancel_build(username=args.username, project=args.project,
-                                      build_num=args.build_num, verbose=args.verbose,
-                                      filters=filters)
+            try:
+                res = circle.cancel_build(username=args.username, project=args.project,
+                                          build_num=args.build_num, verbose=args.verbose,
+                                          filters=filters)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(7)
             if not args.verbose:
                 for k, v in res.iteritems():
                     print("{}: {}".format(k, v))
@@ -351,6 +386,7 @@ available actions:
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\t(optional) The project's cache to clear"
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
+            help_args['  --quiet|-q'] = "\t\t(optional) Suppress output"
 
             ex_args = OrderedDict()
             ex_args["Clear a project's cache"] = "circlecli clear-cache -u foo_user -p foo_project"
@@ -358,8 +394,13 @@ available actions:
         else:
             if args.project and not args.username:
                 parser.error("username (-u) is required")
-            res = circle.clear_cache(username=args.username, project=args.project,
-                                     verbose=args.verbose)
+            try:
+                res = circle.clear_cache(username=args.username, project=args.project,
+                                         verbose=args.verbose)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(8)
             if not args.verbose:
                 for k, v in res.iteritems():
                     print("{}: {}".format(k, v))
@@ -371,7 +412,8 @@ available actions:
             help_args['  --username|-u <str>'] = "\tThe target username (or default if not provided)"
             help_args['  --project|-p <str>'] = "\tThe project to list or set environment variables"
             help_args['  --verbose|-v'] = "\t(optional) Print original full output from CircleCI"
-            help_args['  --set|-s KEY=VALUE'] = "\t(optional) Set a key/value pair (can include multiple)"
+            help_args['  --set|-s KEY=VAL'] = "\t(optional) Set a key/value pair (can include multiple)"
+            help_args['  --quiet|-q'] = "\t\t(optional) Suppress output"
 
             ex_args = OrderedDict()
             ex_args["List a project's environment variables"] = "circlecli env -u foo_user -p foo_project"
@@ -387,8 +429,13 @@ available actions:
                 if "=" in envvar:
                     name, value = envvar.split("=")
                     envvars[name] = value
-            res = circle.envvar(username=args.username, project=args.project,
-                                verbose=args.verbose, **envvars)
+            try:
+                res = circle.envvar(username=args.username, project=args.project,
+                                    verbose=args.verbose, **envvars)
+            except Exception as e:
+                if not args.quiet:
+                    print(e.message)
+                sys.exit(9)
             if not args.verbose:
                 for var in res:
                     print(var)
