@@ -8,7 +8,7 @@ Unofficial CircleCI cross-platform CLI tool, written in Python.
 
 I wrote this tool because I realized there wasn't anything cross-platform, that you could easily use on Linux, OSX, or Windows (if you are one of the rare ones using Windows CLI anyway). Python comes pre-installed on most Linux distros, and OSX, so it should be easy to get up and running.
 
-CircleCLI supports most of what the official API supports (new features are being added), and it also supports a little bit of what isn't supported by CircleCI just yet (adding multiple environment variables simultaneously, displaying concise response info, validating circle.yml files, etc).
+CircleCLI supports most of what the official API supports (new features are being added), and it also supports a little bit of what isn't supported by CircleCI just yet (adding multiple environment variables simultaneously, displaying concise response info, validating circle.yml files, checking status of CircleCI, etc).
 
 See the [Examples](#examples) section for common types of usage.
 
@@ -50,7 +50,7 @@ optional arguments:
   --build-num BUILD_NUM, -b BUILD_NUM
                         The target build number
   --config, -c          Only print saved configuration values
-  --quiet, -q           Suppress output (only for certain actions)
+  --quiet, -q           Suppress output
   --set ENVVARS, -s ENVVARS
                         Set a variable (used with 'env' action)
   --filter FILTERS, -f FILTERS
@@ -67,6 +67,7 @@ available actions:
   clear-cache Clear the cache for a project.
   env   List or add environment variables for a project.
   check   Ensure a circle.yml file is valid according to CircleCI docs.
+  status  Check CircleCI site status (http://status.circleci.com).
   <cmd> help  Display help text for a particular action
 ```
 CircleCLI by default displays formatted, concise data for each action.
@@ -96,6 +97,21 @@ default_username =
 ```
 me@foobox:~$ circlecli check /home/foo/projects/bar/circle.yml
 'branch' or 'tag' required in 'deployment.staging'
+```
+#### Check status of CircleCI components (from [http://status.circleci.com](http://status.circleci.com))
+```
+me@foobox:~$ circlecli status -v
+All Systems Operational
+
+CircleCI                      : Operational
+GitHub                        : Operational
+Heroku                        : Operational
+AWS                           : Operational
+Pusher Pusher REST API        : Operational
+Pusher WebSocket client API   : Operational
+OS X Builds                   : Operational
+Test Result Processing        : Operational
+Ubuntu 14.04 Builds           : Operational
 ```
 #### List projects you follow
 ```
