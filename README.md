@@ -95,7 +95,7 @@ default_username =
 #### Validate a circle.yml file
 ```
 me@foobox:~$ circlecli check /home/foo/projects/bar/circle.yml
-'branch' missing from 'deployment.staging'
+'branch' or 'tag' required in 'deployment.staging'
 ```
 #### List projects you follow
 ```
