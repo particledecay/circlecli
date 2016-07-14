@@ -18,7 +18,7 @@ print repr(install_requires)
 
 setup(
     name='circlecli',
-    version='1.2.6',
+    version='1.2.7',
     url='https://github.com/TheRealJoeLinux/circlecli',
     description=_read('DESCRIPTION'),
     long_description=_read('README.md'),
@@ -27,6 +27,7 @@ setup(
     license='MIT License',
     keywords=['circleci', 'cicd', 'rest', 'api', 'cli', 'command', 'command-line'],
     install_requires=install_requires,
+    packages=['circlecli'],
     py_modules=['circlecli'],
     classfiers=[
         'Development Status :: 2 - Pre-Alpha',
