@@ -1,20 +1,29 @@
-# CircleCLI
-
+# CircleCLI ![PyPI Version](https://img.shields.io/pypi/v/circlecli.svg) ![PyPI License](https://img.shields.io/pypi/l/circlecli.svg) ![CircleCI Status](https://img.shields.io/circleci/project/TheRealJoeLinux/circlecli.svg) ![Codecov Status](https://img.shields.io/codecov/c/github/TheRealJoeLinux/circlecli.svg)
 Unofficial CircleCI cross-platform CLI tool, written in Python.
-
-![PyPI Version](https://img.shields.io/pypi/v/circlecli.svg) ![PyPI License](https://img.shields.io/pypi/l/circlecli.svg) ![CircleCI Status](https://img.shields.io/circleci/project/TheRealJoeLinux/circlecli.svg) ![Codecov Status](https://img.shields.io/codecov/c/github/TheRealJoeLinux/circlecli.svg)
 
 **_Note: This project is currently in beta. There will be bugs._**
 
-I wrote this tool because I realized there wasn't anything cross-platform, that you could easily use on Linux, OSX, or Windows (if you are one of the rare ones using Windows CLI anyway). Python comes pre-installed on most Linux distros, and OSX, so it should be easy to get up and running.
+![Example commands](assets/examples.gif)
 
-CircleCLI supports most of what the official API supports (new features are being added), and it also supports a little bit of what isn't supported by CircleCI just yet (adding multiple environment variables simultaneously, displaying concise response info, validating circle.yml files, checking status of CircleCI, etc).
+## Features
+* Cross-platform (Linux, BSD, OSX, Windows)
+* Easy, natural interaction with CircleCI's REST API
+* Easy-to-read output (you can still get original output)
+* Add multiple environment variables to your project at once (the API can't)
+* View current CircleCI site and component status
+* Validate your circle.yml files (and a pre-commit hook to do it automatically)
+* Read token from environment (great for scripting)
 
 See the [Examples](#examples) section for common types of usage.
 
 ## Installation
+#### Using package management
 ```
 pip install circlecli
+```
+#### Manually
+```
+python setup.py install
 ```
 
 ## Configuration
@@ -58,17 +67,17 @@ optional arguments:
   --verbose, -v         Return original full output from CircleCI
 
 available actions:
-  me    Provide information about the signed in user.
-  projects  List of all the projects you're following on CircleCI.
-  builds  Last 30 build summaries for the account (or for a project).
-  artifacts List the artifacts produced by a given build.
-  retry   Retry a given build.
-  cancel  Cancel a given build.
-  clear-cache Clear the cache for a project.
-  env   List or add environment variables for a project.
-  check   Ensure a circle.yml file is valid according to CircleCI docs.
-  status  Check CircleCI site status (http://status.circleci.com).
-  <cmd> help  Display help text for a particular action
+  me            Provide information about the signed in user.
+  projects      List of all the projects you're following on CircleCI.
+  builds        Last 30 build summaries for the account (or for a project).
+  artifacts     List the artifacts produced by a given build.
+  retry         Retry a given build.
+  cancel        Cancel a given build.
+  clear-cache   Clear the cache for a project.
+  env           List or add environment variables for a project.
+  check         Ensure a circle.yml file is valid according to CircleCI docs.
+  status        Check CircleCI site status (http://status.circleci.com).
+  <cmd> help    Display help text for a particular action
 ```
 CircleCLI by default displays formatted, concise data for each action.
 To display the original response from CircleCI, simply add `-v` to your command.
