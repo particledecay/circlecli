@@ -351,6 +351,14 @@ def circle_status(verbose=False):
     page_component = soup.select('.page-status > .status')
     page_component = page_component[0] if len(page_component) > 0 else None
     if not page_component:
+        # check if there is an incident
+        page_incident = soup.select('.incident-title .actual-title')
+        if page_incident:
+            incident_title = page_incident[0].find(text=True).strip()
+            response.append((None, incident_title))
+        else:
+            # we don't know what's wrong
+            response.append((None, "Could not determine CircleCI status"))
         return response
 
     page_status = page_component.find(text=True).strip()

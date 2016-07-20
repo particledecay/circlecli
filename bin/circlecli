@@ -224,8 +224,8 @@ available actions:
             try:
                 res = circle_status(args.verbose)
             except Exception as e:
-                if not args.quiet:
-                    print(e.message)
+                # CircleCI might be down
+                print("Could not reach CircleCI")
                 sys.exit(10)
 
             # don't check for args.verbose, since response type doesn't change
