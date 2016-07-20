@@ -1,7 +1,7 @@
 # Contributors
 
-#### Joey Espinosa (@TheRealJoeLinux)
+#### Joey Espinosa ([@TheRealJoeLinux](https://github.com/TheRealJoeLinux))
 * Author
 
-#### Joseph W Becher (@drazisil)
+#### Joseph W Becher ([@drazisil](https://github.com/drazisil))
 * Unit tests
