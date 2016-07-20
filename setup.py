@@ -18,7 +18,7 @@ print repr(install_requires)
 
 setup(
     name='circlecli',
-    version='1.2.8',
+    version='1.2.9',
     url='https://github.com/TheRealJoeLinux/circlecli',
     description=_read('DESCRIPTION'),
     long_description=_read('README.md'),
