@@ -454,7 +454,9 @@ available actions:
             envvars = {}
             for envvar in args.envvars:
                 if "=" in envvar:
-                    name, value = envvar.split("=")
+                    env_split = envvar.split("=")
+                    name = env_split[0]
+                    value = "=".join(env_split[1:])  # preserve any add'l "=" that may be part of value
                     envvars[name] = value
             try:
                 res = circle.envvar(username=args.username, project=args.project,
