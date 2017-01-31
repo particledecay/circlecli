@@ -131,5 +131,34 @@ class TestCircleCLI(unittest.TestCase):
 
         self.assertEqual(data['login'], 'therealbarack')
 
+
+class TestHostedCircleCLI(unittest.TestCase):
+    """A self-hosted CircleCI installation should work."""
+
+    def setUp(self):
+        self.circlecli = CircleAPI(token=FAKE_TOKEN, baseurl="https://myownhost.com")
+
+    """ CircleAPI.me()
+        test results as a dict
+    """
+    @with_httmock(mocks.circlecli.resource_get)
+    def test_me_as_dict(self):
+        results = self.circlecli.me(verbose=False)
+
+        self.assertEqual(results['Username'], 'therealbarack')
+
+    """ CircleAPI.me()
+        test results as json
+    """
+    @with_httmock(mocks.circlecli.resource_get)
+    def test_me_as_json(self):
+
+        results = self.circlecli.me(verbose=True)
+
+        data = json.loads(results)
+
+        self.assertEqual(data['login'], 'therealbarack')
+
+
 if __name__ == '__main__':
     unittest.main()

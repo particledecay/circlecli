@@ -11,14 +11,15 @@ from urlparse import ParseResult, urlparse, urlunparse
 class CircleAPI(object):
     """Simple wrapper for requests specific to CircleCI."""
 
-    def __init__(self, token):
+    def __init__(self, token, baseurl="https://circleci.com/api/v1"):
         """Load the API token.
 
         Args:
             token (str): the CircleCI API token (obtained at https://circleci.com/account/api)
+            baseurl (str): the CircleCI API base URL (supporting enterprise/self-hosted deployments)
         """
         self._token = self._validate_token(token)
-        self._base_url = "https://circleci.com/api/v1"
+        self._base_url = baseurl
 
     def _validate_token(self, token):
         """Ensure the provided token is a valid CircleCI API token.

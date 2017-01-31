@@ -9,6 +9,8 @@ __doc__ = docstring
 
 SECTION_NAME = 'circlecli'
 ENV_TOKEN_NAME = 'CIRCLE_TOKEN'
+ENV_BASE_URL = 'CIRCLE_BASEURL'
+STANDARD_BASEURL = 'https://circleci.com/api/v1'
 
 
 def read_config(config_file):
@@ -41,6 +43,9 @@ def init_config(config_path):
     if env.get(ENV_TOKEN_NAME):
         config['token'] = env[ENV_TOKEN_NAME]
 
+    # CircleCI Enterprise or standard
+    config['baseurl'] = env.get(ENV_BASE_URL, STANDARD_BASEURL)
+
     if not config.get('token'):
         # read new token
         print("Enter your CircleCI API token at the prompt (https://circleci.com/account/api).")
@@ -58,6 +63,7 @@ def init_config(config_path):
             cp = ConfigParser.SafeConfigParser()
             cp.add_section(SECTION_NAME)
             cp.set(SECTION_NAME, 'token', config['token'])
+            cp.set(SECTION_NAME, 'baseurl', config['baseurl'])
             cp.set(SECTION_NAME, 'default_username', config['default_username'])
             cp.write(config_fp)
             config_fp.close()
@@ -90,6 +96,9 @@ if __name__ == "__main__":
     parser.add_argument('--username', '-u', dest='username', action='store',
                         default=config.get('default_username'),
                         help="The username of the project/repo owner")
+    parser.add_argument('--api-baseurl', '-a', dest='baseurl', action='store',
+                        default=config.get('baseurl'),
+                        help="The target CircleCI API base URL")
     parser.add_argument('--build-num', '-b', dest='build_num', action='store',
                         type=int, help="The target build number")
     parser.add_argument('--config', '-c', dest='config', action='store_true',
@@ -179,7 +188,7 @@ available actions:
                 print("")
 
     # instantiate the CircleAPI class
-    circle = CircleAPI(config['token'])
+    circle = CircleAPI(token=config['token'], baseurl=config['baseurl'])
 
     if args.config or args.action == 'config':
         for k, v in config.iteritems():

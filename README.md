@@ -13,6 +13,7 @@ Unofficial CircleCI cross-platform CLI tool, written in Python.
 * View current CircleCI site and component status
 * Validate your circle.yml files (and a pre-commit hook to do it automatically)
 * Read token from environment (great for scripting)
+* **Now supporting CircleCI Enterprise!**
 
 See the [Examples](#examples) section for common types of usage.
 
@@ -34,14 +35,15 @@ If you let CircleCLI prompt you for info, then it will create a configuration fi
 [circlecli]
 token = XXXXX
 default_username = XXXXX
+baseurl = XXXXX
 ```
 You can always edit your own values in this configuration file.
 
 ## Usage
 ```
 usage: circlecli [--help] [--project PROJECT] [--username USERNAME]
-                 [--build-num BUILD_NUM] [--config] [--quiet] [--set ENVVARS]
-                 [--filter FILTERS] [--verbose]
+                 [--api-baseurl BASEURL] [--build-num BUILD_NUM] [--config]
+                 [--quiet] [--set ENVVARS] [--filter FILTERS] [--verbose]
                  [action] [help]
 
 Execute CircleCI REST API commands from the CLI.
@@ -56,6 +58,8 @@ optional arguments:
                         The target project name
   --username USERNAME, -u USERNAME
                         The username of the project/repo owner
+  --api-baseurl BASEURL, -a BASEURL
+                        The target CircleCI API base URL
   --build-num BUILD_NUM, -b BUILD_NUM
                         The target build number
   --config, -c          Only print saved configuration values
@@ -100,7 +104,7 @@ Projects: https://github.com/whitehouse/constitution, https://github.com/whiteho
 ```
 me@foobox:~$ circlecli config
 token = THISISNOTAREALTOKEN
-default_username = 
+default_username =
 ```
 #### Validate a circle.yml file
 ```

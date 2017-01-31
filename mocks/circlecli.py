@@ -8,7 +8,7 @@ Mocks for the CircleCLI API library tests.
 
 from httmock import response, urlmatch
 
-NETLOC = r'(.*\.)?circleci\.com$'
+NETLOC = r'(.*\.)?[^.]+\.com$'
 HEADERS = {'content-type': 'application/json'}
 GET = 'get'
 DELETE = 'delete'
