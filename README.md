@@ -1,7 +1,6 @@
+*THIS PROJECT IS DEPRECATED, CIRCLECI HAS THESE FEATURES BUILT-IN NOW*
 # CircleCLI ![PyPI Version](https://img.shields.io/pypi/v/circlecli.svg) ![PyPI License](https://img.shields.io/pypi/l/circlecli.svg) ![CircleCI Status](https://img.shields.io/circleci/project/TheRealJoeLinux/circlecli.svg) ![Codecov Status](https://img.shields.io/codecov/c/github/TheRealJoeLinux/circlecli.svg)
 Unofficial CircleCI cross-platform CLI tool, written in Python.
-
-**_Note: This project is currently in beta. There will be bugs._**
 
 ![Example commands](assets/examples.gif)
 
